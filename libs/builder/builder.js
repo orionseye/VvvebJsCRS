@@ -1502,7 +1502,7 @@ Vvveb.Builder = {
 						 left:${pos.left - (self.frameDoc.scrollLeft ?? 0)}px;
 						 width:${width}px; 
 						 height:${height}px;
-						 display:${event.target.hasAttribute('contenteditable') ? "none":"block"};
+						 display:${event.target.hasAttribute('contenteditable') ? "none":""};
 						 border:${self.isDragging ? "1px dashed #0d6efd":""};
 					`);
 
@@ -1838,7 +1838,8 @@ Vvveb.Builder = {
 		
 		document.getElementById("add-section-btn").addEventListener("click", function(event) {
 			
-			addSectionElement = self.highlightEl; 
+			//addSectionElement = self.highlightEl;		
+            addSectionElement = self.selectedEl;	
 			addSectionBox.style.display  = "block"; 
 
 			let pos = offset(addSectionElement);	
