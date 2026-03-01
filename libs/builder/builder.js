@@ -859,7 +859,7 @@ Vvveb.Builder = {
 
 		self.dragElement = null;
 		
-		self.highlightEnabled = true;
+		//self.highlightEnabled = true; Leave that shit commented as it forces re-calculations on highlight and causes our "+" icon to jump.
 		
 		self.leftPanelWidth = document.getElementById("left-panel").clientWidth;
 	},
@@ -2674,7 +2674,12 @@ Vvveb.Gui = {
 			componentTab.style.display = "";
 			bsTab.show(); 
 		}
-
+		// Dimi tweak. If panel is being opened and an element is already selected, reload its properties
+		// VvvvbJS default behaviour was that even you click an element and open the panel, the current element's properties were not fetched. You had to click it again.
+		// See README REMARKS [1]
+		if (rightColumnEnabled && Vvveb.Builder.selectedEl) {
+			Vvveb.Builder.loadNodeComponent(Vvveb.Builder.selectedEl);
+		}
 	},
 
 	toggleTreeList: function () {

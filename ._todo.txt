@@ -1,7 +1,5 @@
 
 
-1505             display:${event.target.hasAttribute('contenteditable') ? "none":"block"};
-  remove 'block' display:${event.target.hasAttribute('contenteditable') ? "none":""};
 
 
 

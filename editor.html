@@ -65,6 +65,10 @@
 						  <i class="la la-download"></i>
 					  </button>
 
+                      <button class="btn btn-light" title="Toggle right column" id="dimi-toggle-right-column-btn" data-vvveb-action="toggleRightColumn" data-bs-toggle="button" aria-pressed="false">
+						  <i class="icon-settings-outline"></i>
+					  </button>
+					  
 					</div>
 					
 								
@@ -667,8 +671,11 @@
 
 									<div class="header">							
 										<ul class="nav nav-tabs" id="box-elements-tabs" role="tablist">
+										  <li class="nav-item sections-tab">
+											<a class="nav-link px-3 active" data-bs-toggle="tab" href="#dimis-sections-list" role="tab" aria-controls="sections" aria-selected="true"><i class="icon-copy-outline"></i><small>Section</small></a>
+										  </li>
 										  <li class="nav-item component-tab">
-											<a class="nav-link px-3 active" id="box-components-tab" data-bs-toggle="tab" href="#box-components" role="tab" aria-controls="components" aria-selected="true"><i class="icon-cube-outline"></i><small>Components</small></a>
+											<a class="nav-link px-3" id="box-components-tab" data-bs-toggle="tab" href="#box-components" role="tab" aria-controls="components" aria-selected="false"><i class="icon-cube-outline"></i><small>Components</small></a>
 										  </li>
 										  <li class="nav-item sections-tab">
 											<a class="nav-link px-3" id="box-sections-tab" data-bs-toggle="tab" href="#box-blocks" role="tab" aria-controls="blocks" aria-selected="false"><i class="icon-copy-outline"></i><small>Blocks</small></a>
@@ -701,7 +708,33 @@
 										</div>
 										
 										<div class="tab-content">
-										  <div class="tab-pane show active" id="box-components" role="tabpanel" aria-labelledby="components-tab">
+										  <!-- dimi's sections -->
+										  <div class="tab-pane show active" id="dimis-sections-list" role="tabpanel" aria-labelledby="dimis-sections-tab">
+											  
+											   <div class="search">
+													  <div class="expand">
+														  <button class="text-sm" title="Expand All" data-vvveb-action="expand"><i class="la la-plus"></i></button>
+														  <button title="Collapse all" data-vvveb-action="collapse"><i class="la la-minus"></i></button> 
+													  </div>	
+
+													  <input class="form-control block-search" placeholder="Search blocks" type="text" data-vvveb-action="search" data-vvveb-on="keyup">
+													  <button class="clear-backspace"  data-vvveb-action="clearSearch">
+														  <i class="la la-times"></i>
+													  </button>
+												  </div>
+
+												<div class="overflow-y-auto mb-5">
+												  <div>
+													  
+													<ul class="sections-list clearfix"  data-type="addbox">
+													</ul>
+
+												  </div>
+												</div>
+										  
+										  </div>
+										  <!-- // dimi's sections -->
+										  <div class="tab-pane" id="box-components" role="tabpanel" aria-labelledby="components-tab">
 											  
 											   <div class="search">
 													  <div class="expand">
@@ -2249,6 +2282,7 @@ let pages = defaultPages;
 let firstPage = Object.keys(pages)[0];
 Vvveb.Builder.init(pages[firstPage]["url"], function() {
 	//load code after page is loaded here
+	Vvveb.TreeList.loadComponents();
 });
 
 Vvveb.Gui.init();
@@ -2260,8 +2294,18 @@ Vvveb.CssEditor.init();
 
 Vvveb.FileManager.addPages(pages);
 Vvveb.FileManager.loadPage(pages[firstPage]["name"]);
+Vvveb.Gui.toggleLeftColumn(false);
 Vvveb.Gui.toggleRightColumn(false);
+Vvveb.Gui.toggleFileManager(false);
+Vvveb.Gui.toggleTreeList(false);
 Vvveb.Breadcrumb.init();
+
+// Tree navigator: Load components when user toggles it visible
+// Needs setTimeout because the panel must be displayed (CSS transition complete)
+// before TreeList can properly render the DOM tree structure into it
+document.querySelector('#toggle-tree-list').addEventListener('click', function() {
+    setTimeout(() => Vvveb.TreeList.loadComponents(), 100);
+});
 </script>
 </body>
 </html>

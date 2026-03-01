@@ -18417,9 +18417,9 @@ body {
     border-radius: 0 0 3px 3px; }
   #vvveb-builder #select-box {
     position: absolute;
-    border: 1px solid var(--bs-primary);
+    border: 1px solid var(--bs-teal);
     color: var(--bs-white);
-    background: rgba(var(--bs-primary), 0.1);
+    background: rgba(var(--bs-teal), 0.1);
     width: 0px;
     height: 0px;
     top: 0px;
@@ -18485,7 +18485,7 @@ body {
     z-index: 1;
     right: -1px;
     top: -25px;
-    background: var(--bs-primary);
+    background: var(--bs-teal);
     color: var(--bs-light);
     padding: 0px 0px;
     border-radius: 3px 3px 0px 0px; }
@@ -18497,9 +18497,9 @@ body {
     padding-right: 2px;
     padding: 2px 5px; }
     #vvveb-builder #select-actions a:hover, #vvveb-builder #wysiwyg-editor.default-editor a:hover, #vvveb-builder #section-actions a#add-section-btn:hover {
-      background-color: rgba(var(--bs-body-color-rgb), 0.3); }
+      background-color: rgba(var(--bs-body-color-rgb), 0.1); }
   #vvveb-builder #section-actions a#add-section-btn:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.9); }
+    background-color: var(--bs-teal); color: white}
   #vvveb-builder #wysiwyg-editor {
     top: auto;
     bottom: 100%;
@@ -18596,10 +18596,10 @@ body {
     #vvveb-builder #section-actions a#add-section-btn {
       position: relative;
       bottom: 0px;
-      background: var(--bs-primary);
-      color: var(--bs-white);
+      background: var(--bs-white);
+      color: var(--bs-teal);
       font-size: 18px;
-      border-radius: 24px;
+      /*border-radius: 24px;*/
       width: 32px;
       height: 32px;
       padding: 3px 7px;
@@ -18611,7 +18611,7 @@ body {
         font-weight: 600; }
       #vvveb-builder #section-actions a#add-section-btn:hover {
         text-decoration: none;
-        filter: brightness(1.2); }
+        /*filter: brightness(1.2);*/ }
   #vvveb-builder #add-section-box {
     width: 50%;
     min-height: 300px;
