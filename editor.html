@@ -630,16 +630,29 @@
 								</div>
 
 								<div id="select-actions">
-									<a id="drag-btn" href="" title="Drag element"><i class="la la-arrows-alt"></i></a>
-									<a id="parent-btn" href="" title="Select parent" class="la-rotate-180"><i class="la la-level-up-alt"></i></a>
+								
+									<!-- Trigger button (always visible) -->
+									<div id="action-trigger">
+										<i class="la la-ellipsis-h"></i>
+									</div>
 									
-									<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
-									<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
-									<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
+									<!-- Action buttons (hidden by default) -->
+									<div id="action-buttons">
+										<a id="drag-btn" href="" title="Drag element" class="d-none"><i class="la la-arrows-alt"></i></a>
+										<a id="parent-btn" href="" title="Select parent"><i class="la la-level-up-alt"></i></a>
+										<a class="action-spacer"></a>
+										
+										<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
+										<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
+										<a id="left-btn" href="" title="Move element left" style="display:none;"><i class="la la-arrow-left"></i></a>
+										<a id="right-btn" href="" title="Move element right" style="display:none;"><i class="la la-arrow-right"></i></a>
+										
+										<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
 
-									<a id="save-reusable-btn" href="" title="Save as reusable" class="mx-2"><i class="icon-save-outline"></i></a>
-									<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
-									<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
+										<a id="save-reusable-btn" href="" title="Save as reusable"><i class="icon-save-outline"></i></a>
+										<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
+										<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
+									</div>
 								</div>
 								
 								<div class="resize">
@@ -694,16 +707,16 @@
 										<div class="me-4 small mt-2 float-end">
 											
 											<div class="form-check d-inline-block small me-1">
-												  <input type="radio" id="add-section-insert-mode-after" value="after" checked="checked" name="add-section-insert-mode" class="form-check-input">
-												 <label class="form-check-label" for="add-section-insert-mode-after">After</label>
-												</div>
-												
-												<div class="form-check d-inline-block small">
-												  <input type="radio" id="add-section-insert-mode-inside" value="inside" name="add-section-insert-mode" class="form-check-input">
-													<label class="form-check-label" for="add-section-insert-mode-inside">Inside</label>
-												</div>
-										
+											  <input type="radio" id="add-section-insert-mode-after" value="after" checked="checked" name="add-section-insert-mode" class="form-check-input">
+											  <label class="form-check-label" for="add-section-insert-mode-after">After</label>
 											</div>
+												
+											<!-- div class="form-check d-inline-block small">
+											  <input type="radio" id="add-section-insert-mode-inside" value="inside" name="add-section-insert-mode" class="form-check-input">
+											  <label class="form-check-label" for="add-section-insert-mode-inside">Inside</label>
+											</div -->
+										
+										</div>
 											
 										</div>
 										
@@ -1755,6 +1768,7 @@
 
 <!-- builder code-->
 <script src="libs/builder/builder.js"></script>	
+<script src="libs/builder/builder-dimi.js"></script>	
 <!-- undo manager-->
 <script src="libs/builder/undo.js"></script>	
 <!-- inputs-->

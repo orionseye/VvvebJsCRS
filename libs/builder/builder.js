@@ -1046,7 +1046,7 @@ Vvveb.Builder = {
 				
 				highlightBox.style.display = "none"; 
 				
-
+				/*
 				window.FrameWindow.addEventListener("beforeunload", function(event) {
 					if (Vvveb.Undo.undoIndex >= 0) {
 						let dialogText = "You have unsaved changes";
@@ -1054,6 +1054,7 @@ Vvveb.Builder = {
 						return dialogText;
 					}
 				});
+				*/
 				
 				window.FrameWindow.addEventListener("unload", function(event) {
 					document.querySelector(".loading-message").classList.add("active");
@@ -1244,6 +1245,94 @@ Vvveb.Builder = {
 									newNextSibling: newNextSibling});
 	},
 
+	// Dimis moveNodeLeft
+	moveNodeLeft: function(node) {
+		if (!node) {
+			node = Vvveb.Builder.selectedEl;
+		}
+
+		const parent = node.parentNode;
+		const oldNextSibling = node.nextSibling;
+		const prevSibling = node.previousElementSibling;
+		
+		// Only move if there's a previous sibling AND parent is flex/grid row
+		if (prevSibling && Vvveb.Builder._isHorizontalLayout(parent)) {
+			prevSibling.before(node);
+			
+			Vvveb.Builder.selectNode(node);
+			
+			Vvveb.Undo.addMutation({
+				type: 'move', 
+				target: node,
+				oldParent: parent,
+				newParent: parent,
+				oldNextSibling: oldNextSibling,
+				newNextSibling: node.nextSibling
+			});
+		}
+	},
+
+	// Dimis moveNodeRight
+	moveNodeRight: function(node) {
+		if (!node) {
+			node = Vvveb.Builder.selectedEl;
+		}
+
+		const parent = node.parentNode;
+		const oldNextSibling = node.nextSibling;
+		const nextSibling = node.nextElementSibling;
+		
+		// Only move if there's a next sibling AND parent is flex/grid row
+		if (nextSibling && Vvveb.Builder._isHorizontalLayout(parent)) {
+			nextSibling.after(node);
+			
+			Vvveb.Builder.selectNode(node);
+			
+			Vvveb.Undo.addMutation({
+				type: 'move', 
+				target: node,
+				oldParent: parent,
+				newParent: parent,
+				oldNextSibling: oldNextSibling,
+				newNextSibling: node.nextSibling
+			});
+		}
+	},
+
+		// Dimis HELPER FUNCTIONS for moving items left/right
+		_isHorizontalLayout: function(element) {
+			if (!element) return false;
+			
+			const frameWindow = element.ownerDocument.defaultView;
+			const styles = frameWindow.getComputedStyle(element);
+			const display = styles.display;
+			
+			// Check if flex with row direction
+			if (display === 'flex' || display === 'inline-flex') {
+				const flexDirection = styles.flexDirection;
+				return flexDirection === 'row' || flexDirection === 'row-reverse';
+			}
+			
+			// Check if grid (assumed horizontal by default)
+			if (display === 'grid' || display === 'inline-grid') {
+				return styles.gridTemplateColumns !== 'none';
+			}
+			
+			return false;
+		},
+
+		_canMoveLeft: function(node) {
+			if (!node) return false;
+			const parent = node.parentNode;
+			return node.previousElementSibling && Vvveb.Builder._isHorizontalLayout(parent);
+		},
+
+		_canMoveRight: function(node) {
+			if (!node) return false;
+			const parent = node.parentNode;
+			return node.nextElementSibling && Vvveb.Builder._isHorizontalLayout(parent);
+		},
+		
 	cloneNode:  function(node) {
 		if (!node) {
 			node = Vvveb.Builder.selectedEl;
@@ -1285,9 +1374,23 @@ Vvveb.Builder = {
 		if (elementType[1] == "BODY") {
 			SelectActions.style.display = "none";
 			AddSectionBtn.style.display = "none";
+			SelectBox.style.border = "none"; // Avoid outlining body, it's stupid
 		} else {
 			SelectActions.style.display = "";
 			AddSectionBtn.style.display = "";
+			SelectBox.style.border = "";  // Reset border for other elements
+		}
+
+		// Dimis Show/hide left/right buttons based on layout
+		const leftBtn = document.getElementById("left-btn");
+		const rightBtn = document.getElementById("right-btn");
+		
+		if (leftBtn && rightBtn) {
+			const canMoveLeft = Vvveb.Builder._canMoveLeft(node);
+			const canMoveRight = Vvveb.Builder._canMoveRight(node);
+			
+			leftBtn.style.display = canMoveLeft ? "" : "none";
+			rightBtn.style.display = canMoveRight ? "" : "none";
 		}
 
 		let target = node;
@@ -1629,6 +1732,21 @@ Vvveb.Builder = {
 							return true;
 						}
 					}
+					
+					let targetElement = event.target;
+					
+					// Check if we're inside a section
+					let parentSection = targetElement.closest('section, header, footer, main, article, aside');
+					
+					if (!parentSection) {
+						// Outside section → auto-select row
+						let parentRow = targetElement.closest('.row');
+						if (parentRow) {
+							targetElement = parentRow;
+						}
+					}
+					// Inside section → select actual element (no auto-jump)
+			
 					//if component properties is loaded in left panel tab instead of right panel show tab
 					let componentTab = document.querySelector(".component-properties-tab a");
 					if (componentTab.offsetParent) { //if properites tab is enabled/visible 
@@ -1637,9 +1755,9 @@ Vvveb.Builder = {
 						bsTab.show(); 
 					}
 					
-					self.selectNode(event.target);
-					Vvveb.TreeList.selectComponent(event.target);
-					self.loadNodeComponent(event.target);
+					self.selectNode(targetElement);
+					Vvveb.TreeList.selectComponent(targetElement);
+					self.loadNodeComponent(targetElement);
 
 					if (Vvveb.component.resizable) {
 						document.getElementById("select-box").classList.add("resizable");
@@ -1727,6 +1845,19 @@ Vvveb.Builder = {
 			Vvveb.Builder.moveNodeUp();
 
 			event.preventDefault();
+			return false;
+		});
+		
+		// Dimis Left/right btns
+		document.querySelector("#left-btn").addEventListener("click", function (e) {
+			Vvveb.Builder.moveNodeLeft();
+			e.preventDefault();
+			return false;
+		});
+
+		document.querySelector("#right-btn").addEventListener("click", function (e) {
+			Vvveb.Builder.moveNodeRight();
+			e.preventDefault();
 			return false;
 		});
 		
@@ -1826,6 +1957,10 @@ Vvveb.Builder = {
 									nextSibling: node.nextSibling});
 
 			self.selectedEl.remove();
+			// Dispatch custom event when an element is deleted
+			// Used to detect empty canvas state and trigger the "no content" UI
+			// Parent document listens for this to show modal and reset insertion mode
+            document.dispatchEvent(new CustomEvent('vvveb.component.removed'));
 			Vvveb.TreeList.loadComponents();
 			Vvveb.SectionList.loadSections();
 
@@ -1865,7 +2000,31 @@ Vvveb.Builder = {
 		});
 		
 		function addSectionComponent(component, after = true) {
-			let node = generateElements(component.html)[0];
+			
+			// FALLBACK: If addSectionElement wasn't set (empty object) or is invalid,
+			// use the currently selected element from the builder instead.
+			// This handles the edge case when we open the modal programmatically
+			// without clicking #add-section-btn first... aka when no content yet
+			if (!addSectionElement || !addSectionElement.closest) {
+				addSectionElement = self.selectedEl;
+			}
+			
+			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
+			
+			// Check: Are we inserting inside a <section> or <header> or <footer>?
+            let parentSection = addSectionElement.closest('section, header, footer, main, article, aside');
+			
+			if (!parentSection && !html.trim().startsWith('<div class="row')) {// !!! don't wrap if the HTML already starts with <div class="row">
+				// proceed..
+				// NO section found → we're at top level
+				// Wrap it: "<h1>Title</h1>" becomes:
+				// "<div class='row'><div class='col-md-12'><h1>Title</h1></div></div>"
+				
+				html = wrapInGrid(html);
+			}
+			// If YES section found → use raw HTML as-is
+			
+			let node = generateElements(html)[0];
 			
 			if (after) {
 				addSectionElement.after(node);
@@ -1878,6 +2037,9 @@ Vvveb.Builder = {
 			}
 
 			self.selectNode(node);
+			// Dimi added: Dispatch custom event so parent document can detect when a component is added
+            // Used to handle empty state transitions (remove no-content class, reset insert mode)
+			document.dispatchEvent(new CustomEvent('vvveb.component.added', { detail: { node: node } }));
 			self.loadNodeComponent(node);
 			Vvveb.TreeList.loadComponents();
 			Vvveb.TreeList.selectComponent(node);
@@ -2083,6 +2245,26 @@ Vvveb.Builder = {
          return html;
 	},
 	
+	// LOL.. just get the content within <body>
+	getHtmlJIM: function(keepHelperAttributes = true) {
+		let doc = window.FrameDocument;
+		
+		doc.querySelectorAll("[contenteditable]").forEach(e => e.removeAttribute("contenteditable"));
+		doc.querySelectorAll("[spellcheckker]").forEach(e => e.removeAttribute("spellcheckker"));
+		doc.querySelectorAll('script[src^="chrome-extension://"]').forEach(e => e.remove());
+		doc.querySelectorAll('script[src^="moz-extension://"]').forEach(e => e.remove());
+		
+		window.dispatchEvent(new CustomEvent("vvveb.getHtml.before", {detail: doc}));
+		
+		Vvveb.FontsManager.cleanUnusedFonts();
+		let html = doc.body.innerHTML; // Just get body content
+		html = this.removeHelpers(html, keepHelperAttributes);
+		
+		window.dispatchEvent(new CustomEvent("vvveb.getHtml.after", {detail: doc}));
+		
+		return html;
+	},
+
 	setHtml: function(html) {
 		//documentElement.innerHTML resets <head> each time and the page flickers
 		//return window.FrameDocument.documentElement.innerHTML = html;
