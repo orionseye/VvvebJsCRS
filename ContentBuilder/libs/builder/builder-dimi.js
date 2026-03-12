@@ -1,4 +1,27 @@
-// Helper to wrap components in row/col structure
+/************************************************
+ Inject htmlArea as our main wrapper after body. 
+ Use it to fetch html content and to style the builder's inner container.
+************************************************/
+function createHtmlAreaWrapper() {
+    let wrapper = window.FrameDocument.createElement('div');
+    wrapper.id = 'htmlArea';
+    wrapper.classList = 'container';
+    //wrapper.style.cssText = "width: 75%; margin: 0 auto; background: white; min-height: 600px; transition: all 0.3s ease;";
+	
+    // Move all existing body children into wrapper
+    while (window.FrameDocument.body.firstChild) {
+        wrapper.appendChild(window.FrameDocument.body.firstChild);
+    }
+    
+    window.FrameDocument.body.appendChild(wrapper);
+    return wrapper;
+}
+
+
+/************************************************
+ Helper to wrap components in row/col structure
+************************************************/
+
 function wrapInGrid(html, colSize = "col-md-12") {
     return `<div class="row">
         <div class="${colSize}">

@@ -1923,12 +1923,19 @@ let saveReusableUrl = 'save.php?action=saveReusable';
 let oEmbedProxyUrl = 'save.php?action=oembedProxy';
 let chatgptOptions = {"key":"","model":"gpt-3.5-turbo-instruct","temperature":0,"max_tokens":300};
 
-
+/******************************************************************
+ Causion! Important note:
+ Your DOM need to have <doctype> declared otherwise you enter
+ quirk mode and have a messy behaviour, especially with modal 
+ positioning. Now doctype (if missing) is added at builder.js
+ See _frameLoaded : function() {  aprox. line 1111 
+******************************************************************/
 <?php if ($hasContent): ?>
 
     // Has content - init normally
     Vvveb.Builder.init('_temp/temp_<?=$serviceID?>.html', function() {
-        Vvveb.TreeList.loadComponents();
+		createHtmlAreaWrapper();
+		Vvveb.TreeList.loadComponents();
     });
     setTimeout(function() {
         $.post('delete_temp.php', {serviceID: <?=$serviceID?>});
@@ -1936,10 +1943,10 @@ let chatgptOptions = {"key":"","model":"gpt-3.5-turbo-instruct","temperature":0,
 	
 <?php else: ?>
 
-    // Empty state - init builder but with modal shown. 
-	// Editor specific behaviour -> see at bottom of doc ready
+    // Empty state - init builder with Dummy button
     Vvveb.Builder.init('about:blank', function() {
-        Vvveb.TreeList.loadComponents();
+        createHtmlAreaWrapper();
+		Vvveb.TreeList.loadComponents();
     });
 	
 <?php endif; ?>
@@ -2018,14 +2025,14 @@ $(function() {
 
 	<?php if (!$hasContent): ?>
 		// Only run empty state check when we KNOW it's empty
-		if (window.FrameDocument.body.children.length === 0) {
+		if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
 			insertDummyButton();
 		}
 	<?php endif; ?>
 
 	function insertDummyButton() {
 		if (window.FrameDocument && window.FrameDocument.body) {
-			if (window.FrameDocument.body.children.length === 0) {
+			if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
 							
 				const btn = window.FrameDocument.createElement('button');
 				btn.className = 'empty-state-btn';
@@ -2039,8 +2046,8 @@ $(function() {
 				// see the style declarations at <head>
 				btn.onclick = function(e) {
 					e.stopPropagation();
-					// Set body to be now the selected element, since button is gone and canvas empty
-					Vvveb.Builder.selectNode(window.FrameDocument.body);
+					// Set htmlArea to be now the selected element, since button is gone and canvas empty
+					Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea'));
 					// set radio button to 'inside' mode .. only for first insert on our blank canvas
 					document.querySelector('#add-section-insert-mode-after').checked = false;
 					document.querySelector('#add-section-insert-mode-inside').checked = true;
@@ -2059,29 +2066,34 @@ $(function() {
 						// When btn gets removed, new node jumps to top and leaves its selection at the bottom.
 						// That's why we force selection box to update position to new inserted node (jump also up to its node).
 						setTimeout(() => {
-							Vvveb.Builder.selectNode(window.FrameDocument.body.lastElementChild);
+							Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea').lastElementChild);
 						}, 50);
 						
 					}, { once: true });					
 				};
 				
-				window.FrameDocument.body.appendChild(btn);
+				try {
+					window.FrameDocument.getElementById('htmlArea').appendChild(btn);
+				} catch(e) {
+					alert('Editor error: htmlArea wrapper missing - please refresh');
+				}
 			}
 		}
 	}
 
-	// Watch for deletions in the iframe body
-	// When all elements are deleted (body empty), revert to empty state.
+	// Watch for deletions in the iframe htmlArea
+	// When all elements are deleted (htmlArea empty), revert to empty state.
 	// We use my CustomEvent('vvveb.component.removed')) -> builder.js aprox. line 1848
 	// - Show no-content class in body
-	// - Select body as insertion target
+	// - Select htmlArea as insertion target
 	// - Set insert mode to 'inside'
 	document.addEventListener('vvveb.component.removed', function() {
 		setTimeout(function() {
-			if (window.FrameDocument.body.children.length === 0) {
+			if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
 				document.body.classList.add('no-content');
+				document.body.classList.remove('has-content');// in some cases 'has-content' persists, so we remove it.
 				
-				Vvveb.Builder.selectNode(window.FrameDocument.body);
+				Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea'));
 				
 				insertDummyButton();
 			}

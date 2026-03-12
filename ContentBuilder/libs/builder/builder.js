@@ -1105,6 +1105,12 @@ Vvveb.Builder = {
 		let self = Vvveb.Builder;
 		
 		self.frameDoc  = window.FrameDocument;
+		if (!self.frameDoc.doctype) { // We need to have <doctype> declared otherwise we have a messy behaviour, especially with modal positioning.
+			let html = '<!DOCTYPE html>' + self.frameDoc.documentElement.outerHTML;
+			self.frameDoc.open();
+			self.frameDoc.write(html);
+			self.frameDoc.close();
+		}
 		self.frameHtml = window.FrameDocument.querySelector("html");
 		self.frameBody = window.FrameDocument.querySelector("body");
 		self.frameHead = window.FrameDocument.querySelector("head");
@@ -1362,7 +1368,10 @@ Vvveb.Builder = {
 		});
 		
 		// Set ONLY current node's explicit width
-		node.style.flex = `0 0 ${newWidth}%`;
+		// Use flex: 0 1 X% instead of flex: 0 0 X%
+		// The middle value (flex-shrink: 1) allows the column to shrink if needed
+		// to prevent overflow when borders/padding push total width beyond 100%
+		node.style.flex = `0 1 ${newWidth}%`;
 		
 		Vvveb.Builder.selectNode(node);
 		
@@ -1397,8 +1406,11 @@ Vvveb.Builder = {
 			}
 		});
 		
-		// Set ONLY current node's explicit width
-		node.style.flex = `0 0 ${newWidth}%`;
+		// Set ONLY current node's explicit width.
+		// Use flex: 0 1 X% instead of flex: 0 0 X%
+		// The middle value (flex-shrink: 1) allows the column to shrink if needed
+		// to prevent overflow when borders/padding push total width beyond 100%
+		node.style.flex = `0 1 ${newWidth}%`;
 		
 		Vvveb.Builder.selectNode(node);
 		
@@ -1505,7 +1517,10 @@ Vvveb.Builder = {
 			self.texteditEl = null;
 		}
 
-		if (elementType[1] == "BODY") {
+		// Use node instead of element because elementType array only contains tag name string,
+        // but we need access to node.id property to check for htmlArea wrapper
+		//if (elementType[1] == "BODY") {
+		if (node.tagName == "BODY" || (node.tagName == "DIV" && node.id == 'htmlArea')) {
 			SelectActions.style.display = "none";
 			AddSectionBtn.style.display = "none";
 			SelectBox.style.border = "none"; // Avoid outlining body, it's stupid
@@ -2160,14 +2175,6 @@ Vvveb.Builder = {
 		
 		function addSectionComponent(component, after = true) {
 			
-			// FALLBACK: If addSectionElement wasn't set (empty object) or is invalid,
-			// use the currently selected element from the builder instead.
-			// This handles the edge case when we open the modal programmatically
-			// without clicking #add-section-btn first... aka when no content yet
-			if (!addSectionElement || !addSectionElement.closest) {
-				addSectionElement = self.selectedEl;
-			}
-			
 			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
 			
 			// Check: Are we inserting inside a <section> or <header> or <footer>?
@@ -2404,7 +2411,7 @@ Vvveb.Builder = {
          return html;
 	},
 	
-	// LOL.. just get the content within <body>
+	// LOL.. just get the content within <htmlArea>
 	getHtmlJIM: function(keepHelperAttributes = true) {
 		let doc = window.FrameDocument;
 		
@@ -2416,7 +2423,7 @@ Vvveb.Builder = {
 		window.dispatchEvent(new CustomEvent("vvveb.getHtml.before", {detail: doc}));
 		
 		Vvveb.FontsManager.cleanUnusedFonts();
-		let html = doc.body.innerHTML; // Just get body content
+		let html = doc.getElementById('htmlArea').innerHTML; // Just get htmlArea content
 		html = this.removeHelpers(html, keepHelperAttributes);
 		
 		window.dispatchEvent(new CustomEvent("vvveb.getHtml.after", {detail: doc}));
