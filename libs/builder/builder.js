@@ -2160,14 +2160,6 @@ Vvveb.Builder = {
 		
 		function addSectionComponent(component, after = true) {
 			
-			// FALLBACK: If addSectionElement wasn't set (empty object) or is invalid,
-			// use the currently selected element from the builder instead.
-			// This handles the edge case when we open the modal programmatically
-			// without clicking #add-section-btn first... aka when no content yet
-			if (!addSectionElement || !addSectionElement.closest) {
-				addSectionElement = self.selectedEl;
-			}
-			
 			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
 			
 			// Check: Are we inserting inside a <section> or <header> or <footer>?
