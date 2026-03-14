@@ -1117,6 +1117,7 @@ Vvveb.Builder = {
 		
 		//insert editor helpers like non editable areas
 		self.frameHead.append(generateElements('<link data-vvveb-helpers href="' + Vvveb.baseUrl + '../../css/vvvebjs-editor-helpers.css" rel="stylesheet">')[0]);
+		self.frameHead.append(generateElements('<link href="' + Vvveb.baseUrl + '../../css/bootstrap.css" rel="stylesheet">')[0]);
 
 		self._initHighlight();
 		
@@ -1523,11 +1524,19 @@ Vvveb.Builder = {
 		if (node.tagName == "BODY" || (node.tagName == "DIV" && node.id == 'htmlArea')) {
 			SelectActions.style.display = "none";
 			AddSectionBtn.style.display = "none";
-			SelectBox.style.border = "none"; // Avoid outlining body, it's stupid
+			SelectBox.style.border = "none";
 		} else {
 			SelectActions.style.display = "";
-			AddSectionBtn.style.display = "";
-			SelectBox.style.border = "";  // Reset border for other elements
+			
+			// Only show AddSectionBtn for elements that are NOT rows themselves
+			// (inner elements should still show AddSectionBtn)
+			if (node.classList.contains('row')) {
+				AddSectionBtn.style.display = "none";
+                SelectBox.style.border = "none";  // Hide border for rows
+			} else {
+				AddSectionBtn.style.display = "";
+			    SelectBox.style.border = "";  // Reset border for other elements
+			}
 		}
 
 		// Dimis Show/hide left/right buttons based on layout
@@ -1927,7 +1936,48 @@ Vvveb.Builder = {
 						document.getElementById("select-box").classList.remove("resizable");
 					}
 					
-					document.getElementById("add-section-box").style.display = "none";
+					// Always attach row-level button
+					let parentRow = targetElement.closest('.row');
+					if (parentRow) {
+						
+						// Remove class from all previously selected rows
+						self.frameBody.querySelectorAll('.top-parent-row').forEach(el => el.classList.remove('top-parent-row'));
+						
+						let addRowBox = document.getElementById("add-row-box");
+						if (!addRowBox) {
+							addRowBox = document.createElement("div");
+							addRowBox.id = "add-row-box";
+							addRowBox.innerHTML = '<a class="btn btn-sm btn-primary">+</a>';
+							document.body.appendChild(addRowBox);
+							
+							// Click handler - trigger the existing add-section-btn
+							addRowBox.addEventListener('click', function(e) {
+								e.preventDefault();
+								e.stopPropagation();
+								
+								// Get the actual clicked row (stored when positioning the button)
+								let clickedRow = this.rowElement; // We need to store this reference
+								if (clickedRow) {
+									self.selectedEl = clickedRow;
+									addSectionElement = clickedRow;
+								}
+								
+								document.getElementById("add-section-btn").click();
+							});
+						}
+						
+						let rect = parentRow.getBoundingClientRect();
+						addRowBox.style.display = "block";
+						addRowBox.style.position = "absolute";
+						addRowBox.style.left = (rect.left + rect.width / 2) + "px";
+						addRowBox.style.top = rect.bottom + "px";
+						addRowBox.rowElement = parentRow; // Store reference to this specific row
+						
+						// Add class to parent row for styling
+						parentRow.classList.add('top-parent-row');
+					}
+
+					//document.getElementById("add-section-box").style.display = "none";
 					event.preventDefault();
 					return false;
 				}	
