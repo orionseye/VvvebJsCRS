@@ -1083,6 +1083,18 @@ Vvveb.Builder = {
 
 							SelectBox.style.width = ((target.offsetWidth ?? target.clientWidth) + self.selectPadding * 2) + "px"; 			
 							SelectBox.style.height = ((target.offsetHeight ?? target.clientHeight) + self.selectPadding * 2) + "px";
+							
+							// Also re-position our (orange) .add-row-box
+							let parentRow = target.closest('.row');
+							if (parentRow) {
+								let addRowBox = document.getElementById("add-row-box");
+								if (addRowBox && addRowBox.style.display !== "none") {
+									let rowPos = offset(parentRow);
+									addRowBox.style.left = (rowPos.left - (self.frameDoc.scrollLeft ?? 0) + parentRow.offsetWidth / 2) + "px";
+									addRowBox.style.top = (rowPos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight + 25) + "px";
+								}
+							}
+							
 						}
 				}
 				
@@ -1105,19 +1117,12 @@ Vvveb.Builder = {
 		let self = Vvveb.Builder;
 		
 		self.frameDoc  = window.FrameDocument;
-		if (!self.frameDoc.doctype) { // We need to have <doctype> declared otherwise we have a messy behaviour, especially with modal positioning.
-			let html = '<!DOCTYPE html>' + self.frameDoc.documentElement.outerHTML;
-			self.frameDoc.open();
-			self.frameDoc.write(html);
-			self.frameDoc.close();
-		}
 		self.frameHtml = window.FrameDocument.querySelector("html");
 		self.frameBody = window.FrameDocument.querySelector("body");
 		self.frameHead = window.FrameDocument.querySelector("head");
 		
 		//insert editor helpers like non editable areas
 		self.frameHead.append(generateElements('<link data-vvveb-helpers href="' + Vvveb.baseUrl + '../../css/vvvebjs-editor-helpers.css" rel="stylesheet">')[0]);
-		self.frameHead.append(generateElements('<link href="' + Vvveb.baseUrl + '../../css/bootstrap.css" rel="stylesheet">')[0]);
 
 		self._initHighlight();
 		
@@ -1531,7 +1536,7 @@ Vvveb.Builder = {
 			// Only show AddSectionBtn for elements that are NOT rows themselves
 			// (inner elements should still show AddSectionBtn)
 			if (node.classList.contains('row')) {
-				AddSectionBtn.style.display = "none";
+				document.getElementById("section-actions").style.display = "none"; // Hide whole section-actions, instead only btn //AddSectionBtn.style.display = "none";
                 SelectBox.style.border = "none";  // Hide border for rows
 			} else {
 				AddSectionBtn.style.display = "";
@@ -1936,7 +1941,7 @@ Vvveb.Builder = {
 						document.getElementById("select-box").classList.remove("resizable");
 					}
 					
-					// Always attach row-level button
+					// Always attach row-level button. (Our orange) .add-row-box
 					let parentRow = targetElement.closest('.row');
 					if (parentRow) {
 						
@@ -1947,8 +1952,8 @@ Vvveb.Builder = {
 						if (!addRowBox) {
 							addRowBox = document.createElement("div");
 							addRowBox.id = "add-row-box";
-							addRowBox.innerHTML = '<a class="btn btn-sm btn-primary">+</a>';
-							document.body.appendChild(addRowBox);
+							addRowBox.innerHTML = '<a class="btn btn-sm">+</a>';
+							document.getElementById("vvveb-builder").appendChild(addRowBox);
 							
 							// Click handler - trigger the existing add-section-btn
 							addRowBox.addEventListener('click', function(e) {
@@ -1969,8 +1974,9 @@ Vvveb.Builder = {
 						let rect = parentRow.getBoundingClientRect();
 						addRowBox.style.display = "block";
 						addRowBox.style.position = "absolute";
-						addRowBox.style.left = (rect.left + rect.width / 2) + "px";
-						addRowBox.style.top = rect.bottom + "px";
+						let pos = offset(parentRow);
+						addRowBox.style.left = (pos.left - (self.frameDoc.scrollLeft ?? 0) + parentRow.offsetWidth / 2) + "px";
+						addRowBox.style.top = (pos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight + 25) + "px";
 						addRowBox.rowElement = parentRow; // Store reference to this specific row
 						
 						// Add class to parent row for styling
@@ -2469,11 +2475,19 @@ Vvveb.Builder = {
 		doc.querySelectorAll("[spellcheckker]").forEach(e => e.removeAttribute("spellcheckker"));
 		doc.querySelectorAll('script[src^="chrome-extension://"]').forEach(e => e.remove());
 		doc.querySelectorAll('script[src^="moz-extension://"]').forEach(e => e.remove());
+		doc.querySelectorAll(".top-parent-row").forEach(e => e.classList.remove("top-parent-row"));
 		
 		window.dispatchEvent(new CustomEvent("vvveb.getHtml.before", {detail: doc}));
 		
 		Vvveb.FontsManager.cleanUnusedFonts();
-		let html = doc.getElementById('htmlArea').innerHTML; // Just get htmlArea content
+		
+			// Clone htmlArea, remove dummy button from clone
+			let htmlArea = doc.getElementById('htmlArea');
+			let clone = htmlArea.cloneNode(true);
+			let dummyBtn = clone.querySelector('.empty-state-btn');
+			if (dummyBtn) dummyBtn.remove();
+			
+		let html = clone.innerHTML; // Get HTML from clone, not original
 		html = this.removeHelpers(html, keepHelperAttributes);
 		
 		window.dispatchEvent(new CustomEvent("vvveb.getHtml.after", {detail: doc}));

@@ -18480,7 +18480,7 @@ body {
         bottom: 0;
         right: 0;
         cursor: nwse-resize; }
-  #vvveb-builder #select-actions, #vvveb-builder #wysiwyg-editor {
+  #vvveb-builder #wysiwyg-editor {
     position: absolute;
     z-index: 1;
     right: 5px;/*-1*/
@@ -18489,17 +18489,16 @@ body {
     color: var(--bs-light);
     padding: 0px 0px;
     border-radius: 3px 3px 0px 0px; }
-  #vvveb-builder #select-actions a, #vvveb-builder #wysiwyg-editor.default-editor a, #vvveb-builder #section-actions a#add-section-btn {
+  #vvveb-builder #wysiwyg-editor.default-editor a {
     pointer-events: auto;
     color: inherit;
     text-decoration: none;
     font-size: 16px;
     padding-right: 2px;
     padding: 2px 5px; }
-    #vvveb-builder #select-actions a:hover, #vvveb-builder #wysiwyg-editor.default-editor a:hover, #vvveb-builder #section-actions a#add-section-btn:hover {
+    #vvveb-builder #wysiwyg-editor.default-editor a:hover {
       background-color: rgba(var(--bs-body-color-rgb), 0.1); }
-  #vvveb-builder #section-actions a#add-section-btn:hover {
-    background-color: var(--bs-teal); color: white}
+
   #vvveb-builder #wysiwyg-editor {
     top: auto;
     bottom: 100%;
@@ -18584,34 +18583,7 @@ body {
       font-size: 1rem; }
       #vvveb-builder #wysiwyg-editor.default-editor div.dropdown a.dropdown-item i {
         margin-right: 0; }
-  #vvveb-builder #section-actions {
-    bottom: 0px;
-    position: absolute;
-    /*border-radius: 3px 3px 0px 0px;*/
-    bottom: -10px;
-    left: 50%;
-    left: calc(50% - 12px); }
-    #vvveb-builder #section-actions.outside {
-      bottom: -30px; }
-    #vvveb-builder #section-actions a#add-section-btn {
-      position: relative;
-      bottom: 0px;
-      background: var(--bs-white);
-      color: var(--bs-teal);
-      font-size: 12px;/*18*/
-      /*border-radius: 24px;*/
-      width: 25px;/*32*/
-      height: 25px;
-      padding: 3px 7px;
-      cursor: pointer;
-      display: block;
-      box-shadow: 0px 0px 1px 2px rgba(18, 83, 205, 0.05);
-      box-shadow: 0px 3px 7px 1px rgba(var(--bs-body-color-rgb), 0.1), 1px 2px 7px 1px rgba(255, 255, 255, 0.1) inset; }
-      #vvveb-builder #section-actions a#add-section-btn i {
-        font-weight: 600; }
-      #vvveb-builder #section-actions a#add-section-btn:hover {
-        text-decoration: none;
-        /*filter: brightness(1.2);*/ }
+
   #vvveb-builder #add-section-box {
     width: 50%;
     min-height: 300px;
@@ -19843,25 +19815,43 @@ video, audio {
    DIMI additions to editor
    ============================================ */
 
-/* Trigger button - always visible */
-#action-trigger {
-    position: relative;
-	cursor: pointer;
-    padding: 1px 10px;
+	/* on click of our dummy button, we hide VvvbJS default '+' button end action options */
+	body.no-content #add-section-btn,
+	body.no-content #select-actions {
+		display: none !important;
+	}
+
+/* ============================================
+   Dedicated styling for:
+   select-actions, action-trigger, 
+   section-actions, add-section-btn
+   ============================================ */
+  #vvveb-builder #select-actions {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: -22px;
+    padding: 0px 0px;
     background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: -1px 5px 8px 0px rgba(0, 0, 0, 0.08);
+	}
+  #vvveb-builder #select-actions a, #action-trigger {
+    pointer-events: auto;
+    cursor: pointer;
+    text-decoration: none;
+	}
+
+		
+/* Trigger button - always visible */
+#action-trigger, #section-actions {
+    position: relative;
+    padding: 1px 10px;
     transition: all 0.2s;
-	pointer-events: auto;
 	line-height: 1em;
 }
 
-#action-trigger:hover {
-    background: #f8f9fa;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-}
 
-#action-trigger i {
+#action-trigger i, #add-section-btn i {
     font-size: 12px;
     color: #333;
 }
@@ -19891,12 +19881,12 @@ video, audio {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
+    padding: 2px 5px;
     text-decoration: none;
-    color: #333 !important;
     font-size: 13px;
     transition: all 0.2s;
     white-space: nowrap;
+    color: #333;
 }
 
 #action-buttons a:hover {
@@ -19923,4 +19913,42 @@ video, audio {
 #action-buttons #delete-btn:hover {
     background: #fff5f5 !important;
     border-color: #dc3545 !important;
+}
+
+/* ============================================
+   Our super dupper top-parent-row AND its button 
+   Note: .top-parent-row styles are in vvvebjs-editor-helpers.css
+   ============================================ */
+#add-row-box {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #FFD580;
+    border: 1px solid #FFD580;
+    border-radius: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+#add-row-box a {
+    color: white;
+    font-size: 14px;
+    line-height: 1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+#add-row-box:hover {
+    background: white;
+}
+
+#add-row-box:hover a {
+    color: #FFD580;
 }

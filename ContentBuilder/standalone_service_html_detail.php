@@ -36,8 +36,23 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 			// Gets deleted once page has rendered with the desired html for the editor. See after Vvveb.Builder.init(..
 			// Gets regenerated after save. See in standalone_service_html_detail_db.php, so we always have fresh content.
 			// ...and gets again deleted.. etc
+			$fullHTML = '<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta charset="utf-8">
+				<base href="">
+				<title></title>
+			    <link id="landing-css" href="../startup/css/bootstrap.css" rel="stylesheet" media="screen">
+			    <link id="vvvebjs-css" href="../startup/css/custom.css" rel="stylesheet" media="screen">
+			</head>
+			<body>
+				<div id="htmlArea" class="container">' . $dbHtml . '</div>
+			</body>
+			</html>';
+			
 			$tempFile = '_temp/temp_' . $serviceID . '.html';
-			file_put_contents($tempFile, $dbHtml);
+			file_put_contents($tempFile, $fullHTML);
 			
 		} else {
 			
@@ -72,14 +87,6 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
     <title>VvvebJs</title>
     
     <link href="css/editor.css" rel="stylesheet">
-
-	<style>
-	/* on click of our dummy button, we hide VvvbJS default '+' button end action options */
-	body.no-content #add-section-btn,
-	body.no-content #select-actions {
-		display: none !important;
-	}
-	</style>
   </head>
 <body class="<?php echo $hasContent ? 'has-content' : 'no-content'; ?>">
 
@@ -577,10 +584,6 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 
 							<div id="select-box">
 								
-								<div id="section-actions">
-									<a id="add-section-btn" href="" title="Add element"><i class="la la-plus"></i></a>
-								</div>
-
 								<div id="wysiwyg-editor" class="default-editor">
 										<!--
 										<a id="bold-btn" href="" title="Bold">
@@ -701,40 +704,47 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 
 
 								<div id="select-actions">
-								
-									<!-- Trigger button (always visible) -->
-									<div id="action-trigger">
-										<i class="la la-ellipsis-h"></i>
-									</div>
+									<div class="d-flex flex-row">
 									
-									<!-- Action buttons (hidden by default) -->
-									<div id="action-buttons">
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="drag-btn" href="" title="Drag element" class="d-none"><i class="la la-arrows-alt"></i></a>
-										<a id="parent-btn" href="" title="Select parent"><i class="la la-level-up-alt"></i></a>
+										<!-- Trigger button (always visible) -->
+										<div id="action-trigger">
+											<i class="la la-ellipsis-h"></i>
 										</div>
 										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
-										<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
-										<a id="left-btn" href="" title="Move element left" style="display:none;"><i class="la la-arrow-left"></i></a>
-										<a id="right-btn" href="" title="Move element right" style="display:none;"><i class="la la-arrow-right"></i></a>
+										<!-- Action buttons (hidden by default) -->
+										<div id="action-buttons">
+											<div style="display: flex; flex-wrap: wrap; gap: 6px;">
+											<a id="drag-btn" href="" title="Drag element" class="d-none"><i class="la la-arrows-alt"></i></a>
+											<a id="parent-btn" href="" title="Select parent"><i class="la la-level-up-alt"></i></a>
+											</div>
+											
+											<div style="display: flex; flex-wrap: wrap; gap: 6px;">
+											<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
+											<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
+											<a id="left-btn" href="" title="Move element left" style="display:none;"><i class="la la-arrow-left"></i></a>
+											<a id="right-btn" href="" title="Move element right" style="display:none;"><i class="la la-arrow-right"></i></a>
+											</div>
+											
+											<div style="display: flex; flex: 0 0 100%; flex-wrap: wrap; gap: 6px;">
+											<a id="decrease-btn" href="" title="Decrease width" style="display:none;"><i class="la la-minus"></i></a>
+											<a id="increase-btn" href="" title="Increase width" style="display:none;"><i class="la la-plus"></i></a>
+											</div>
+											
+											<div style="display: flex; flex-wrap: wrap; gap: 6px;">
+											<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
+											<a id="save-reusable-btn" href="" title="Save as reusable"><i class="icon-save-outline"></i></a>
+											</div>
+											
+											<div style="display: flex; flex-wrap: wrap; gap: 6px;">
+											<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
+											<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
+											</div>
+										</div>
+									
+										<div id="section-actions">
+											<a id="add-section-btn" href="" title="Add element"><i class="la la-plus"></i></a>
 										</div>
 										
-										<div style="display: flex; flex: 0 0 100%; flex-wrap: wrap; gap: 6px;">
-										<a id="decrease-btn" href="" title="Decrease width" style="display:none;"><i class="la la-minus"></i></a>
-										<a id="increase-btn" href="" title="Increase width" style="display:none;"><i class="la la-plus"></i></a>
-										</div>
-										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
-										<a id="save-reusable-btn" href="" title="Save as reusable"><i class="icon-save-outline"></i></a>
-										</div>
-										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
-										<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
-										</div>
 									</div>
 								</div>
 								
@@ -1934,7 +1944,6 @@ let chatgptOptions = {"key":"","model":"gpt-3.5-turbo-instruct","temperature":0,
 
     // Has content - init normally
     Vvveb.Builder.init('_temp/temp_<?=$serviceID?>.html', function() {
-		createHtmlAreaWrapper();
 		Vvveb.TreeList.loadComponents();
     });
     setTimeout(function() {
@@ -1944,8 +1953,8 @@ let chatgptOptions = {"key":"","model":"gpt-3.5-turbo-instruct","temperature":0,
 <?php else: ?>
 
     // Empty state - init builder with Dummy button
-    Vvveb.Builder.init('about:blank', function() {
-        createHtmlAreaWrapper();
+    Vvveb.Builder.init('startup/index.html', function() {
+		insertDummyButton();
 		Vvveb.TreeList.loadComponents();
     });
 	
@@ -2015,89 +2024,6 @@ $(function() {
 			}
 		});
 		$(window.FrameDocument.body).data('saveimages').save();
-	});
-	
-	
-    /*****************************************************
-	  Editor specific behaviour whether builder 
-	  has content or not  IN DOC READY
-	*****************************************************/
-
-	<?php if (!$hasContent): ?>
-		// Only run empty state check when we KNOW it's empty
-		if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
-			insertDummyButton();
-		}
-	<?php endif; ?>
-
-	function insertDummyButton() {
-		if (window.FrameDocument && window.FrameDocument.body) {
-			if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
-							
-				const btn = window.FrameDocument.createElement('button');
-				btn.className = 'empty-state-btn';
-				btn.textContent = 'Oh, nothing here. + Click me to add your first content +';
-				
-				// Style it as a big block, like in Contenbuilder.js
-				btn.style.cssText = "display: block; width: 70%; height: 200px; margin: 0 auto; font-family: sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; justify-content: center; align-items: center; color: #333; border: 1px dashed rgba(169, 169, 169, 0.8); background: rgba(255, 255, 255, 0.5); cursor: pointer; transition: all ease 0.3s; outline: none !important;";
-				
-				// on click, we also need to hide VvvbJS default '+' button end action options
-				// this is done with pure CSS, when body has class 'no-content'. 
-				// see the style declarations at <head>
-				btn.onclick = function(e) {
-					e.stopPropagation();
-					// Set htmlArea to be now the selected element, since button is gone and canvas empty
-					Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea'));
-					// set radio button to 'inside' mode .. only for first insert on our blank canvas
-					document.querySelector('#add-section-insert-mode-after').checked = false;
-					document.querySelector('#add-section-insert-mode-inside').checked = true;
-					// Trigger the native '+' button click
-					document.getElementById("add-section-btn").click();
-					
-					// After successful insertion (see builder.js vvveb.component.added event)
-					document.addEventListener('vvveb.component.added', function() {
-						// Delete dummy button first.. canvas is empty now
-						btn.remove();
-						document.body.classList.remove('no-content');// remove no-content class from body
-						document.querySelector('#add-section-insert-mode-after').checked = true;
-						document.querySelector('#add-section-insert-mode-inside').checked = false;
-						
-						// New node is actually inserted after the btn, gets auto-selected for editing
-						// When btn gets removed, new node jumps to top and leaves its selection at the bottom.
-						// That's why we force selection box to update position to new inserted node (jump also up to its node).
-						setTimeout(() => {
-							Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea').lastElementChild);
-						}, 50);
-						
-					}, { once: true });					
-				};
-				
-				try {
-					window.FrameDocument.getElementById('htmlArea').appendChild(btn);
-				} catch(e) {
-					alert('Editor error: htmlArea wrapper missing - please refresh');
-				}
-			}
-		}
-	}
-
-	// Watch for deletions in the iframe htmlArea
-	// When all elements are deleted (htmlArea empty), revert to empty state.
-	// We use my CustomEvent('vvveb.component.removed')) -> builder.js aprox. line 1848
-	// - Show no-content class in body
-	// - Select htmlArea as insertion target
-	// - Set insert mode to 'inside'
-	document.addEventListener('vvveb.component.removed', function() {
-		setTimeout(function() {
-			if (window.FrameDocument.getElementById('htmlArea').children.length === 0) {
-				document.body.classList.add('no-content');
-				document.body.classList.remove('has-content');// in some cases 'has-content' persists, so we remove it.
-				
-				Vvveb.Builder.selectNode(window.FrameDocument.getElementById('htmlArea'));
-				
-				insertDummyButton();
-			}
-		}, 50);
 	});
 
 }); //doc ready 
