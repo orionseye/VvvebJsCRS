@@ -1091,7 +1091,7 @@ Vvveb.Builder = {
 								if (addRowBox && addRowBox.style.display !== "none") {
 									let rowPos = offset(parentRow);
 									addRowBox.style.left = (rowPos.left - (self.frameDoc.scrollLeft ?? 0) + parentRow.offsetWidth / 2) + "px";
-									addRowBox.style.top = (rowPos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight + 25) + "px";
+									addRowBox.style.top = (rowPos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight) + "px";
 								}
 							}
 							
@@ -1513,6 +1513,7 @@ Vvveb.Builder = {
 		let self = this;
 		let SelectActions = document.getElementById("select-actions");
 		let AddSectionBtn = document.getElementById("add-section-btn");
+		let AddRowBox = document.getElementById("add-row-box");
 		let elementType = this._getElementType(node);
 		
 		if (self.texteditEl && (self.selectedEl != node)) {
@@ -1530,6 +1531,7 @@ Vvveb.Builder = {
 			SelectActions.style.display = "none";
 			AddSectionBtn.style.display = "none";
 			SelectBox.style.border = "none";
+			AddRowBox.style.display = "none";
 		} else {
 			SelectActions.style.display = "";
 			
@@ -1947,21 +1949,17 @@ Vvveb.Builder = {
 						
 						// Remove class from all previously selected rows
 						self.frameBody.querySelectorAll('.top-parent-row').forEach(el => el.classList.remove('top-parent-row'));
+						parentRow.classList.add('top-parent-row');
 						
-						let addRowBox = document.getElementById("add-row-box");
-						if (!addRowBox) {
-							addRowBox = document.createElement("div");
-							addRowBox.id = "add-row-box";
-							addRowBox.innerHTML = '<a class="btn btn-sm">+</a>';
-							document.getElementById("vvveb-builder").appendChild(addRowBox);
-							
-							// Click handler - trigger the existing add-section-btn
+						let addRowBox = document.getElementById("add-row-box");  // Just get it - it already exists!
+						
+						// Attach click handler ONCE (not on every click)
+						if (!addRowBox.hasClickHandler) {
 							addRowBox.addEventListener('click', function(e) {
 								e.preventDefault();
 								e.stopPropagation();
 								
-								// Get the actual clicked row (stored when positioning the button)
-								let clickedRow = this.rowElement; // We need to store this reference
+								let clickedRow = this.rowElement;
 								if (clickedRow) {
 									self.selectedEl = clickedRow;
 									addSectionElement = clickedRow;
@@ -1969,18 +1967,16 @@ Vvveb.Builder = {
 								
 								document.getElementById("add-section-btn").click();
 							});
+							addRowBox.hasClickHandler = true;
 						}
 						
-						let rect = parentRow.getBoundingClientRect();
-						addRowBox.style.display = "block";
-						addRowBox.style.position = "absolute";
+						// Position the button (using offset() approach like VvvebJS does)
+						// NOTE!: If you make here, make them also at selectBoxPosition = function(event) .. aprox. line 1072, where everything gets re-positioned on viewport change
 						let pos = offset(parentRow);
+						addRowBox.style.display = "block";
 						addRowBox.style.left = (pos.left - (self.frameDoc.scrollLeft ?? 0) + parentRow.offsetWidth / 2) + "px";
-						addRowBox.style.top = (pos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight + 25) + "px";
+						addRowBox.style.top = (pos.top - (self.frameDoc.scrollTop ?? 0) + parentRow.offsetHeight) + "px";
 						addRowBox.rowElement = parentRow; // Store reference to this specific row
-						
-						// Add class to parent row for styling
-						parentRow.classList.add('top-parent-row');
 					}
 
 					//document.getElementById("add-section-box").style.display = "none";

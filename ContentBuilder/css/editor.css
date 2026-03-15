@@ -19921,16 +19921,17 @@ video, audio {
    ============================================ */
 #add-row-box {
     position: absolute;
-    width: 20px;
+	width: 20px;
     height: 20px;
     background: #FFD580;
     border: 1px solid #FFD580;
     border-radius: 5%;
-    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 9999;
+    z-index: 2;
+	pointer-events: auto;
+	display: none;
 }
 
 #add-row-box a {

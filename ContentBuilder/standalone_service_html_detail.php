@@ -772,6 +772,11 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 
 							</div>
 							
+							<!-- My (orange) top-parent-row box outline -->
+							<div id="add-row-box">
+								<a href="" title="Add row"><i class="la la-plus"></i></a>
+							</div>
+							
 							<!-- add section box -->
 							<div id="add-section-box" class="drag-elements">
 
