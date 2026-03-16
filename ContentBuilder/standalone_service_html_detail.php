@@ -43,8 +43,7 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 				<meta charset="utf-8">
 				<base href="">
 				<title></title>
-			    <link id="landing-css" href="../startup/css/bootstrap.css" rel="stylesheet" media="screen">
-			    <link id="vvvebjs-css" href="../startup/css/custom.css" rel="stylesheet" media="screen">
+			    <link id="landing-css" href="../startup/css/content.css" rel="stylesheet" media="screen">
 			</head>
 			<body>
 				<div id="htmlArea" class="container">' . $dbHtml . '</div>
