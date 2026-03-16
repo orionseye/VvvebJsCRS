@@ -1945,6 +1945,10 @@ Vvveb.Builder = {
 					
 					// Always attach row-level button. (Our orange) .add-row-box
 					let parentRow = targetElement.closest('.row');
+					// Also iterate to previous, if there is a <sction> with class 'row'
+					while (parentRow && parentRow.parentElement.closest('.row')) {
+						parentRow = parentRow.parentElement.closest('.row');
+					}
 					if (parentRow) {
 						
 						// Remove class from all previously selected rows
@@ -2232,7 +2236,7 @@ Vvveb.Builder = {
 			// Check: Are we inserting inside a <section> or <header> or <footer>?
             let parentSection = addSectionElement.closest('section, header, footer, main, article, aside');
 			
-			if (!parentSection && !html.trim().startsWith('<div class="row')) {// !!! don't wrap if the HTML already starts with <div class="row">
+			if (!parentSection && !html.trim().startsWith('<div class="row') && !html.trim().startsWith('<section')) {// !!! don't wrap if the HTML already starts with <div class="row">
 				// proceed..
 				// NO section found → we're at top level
 				// Wrap it: "<h1>Title</h1>" becomes:
