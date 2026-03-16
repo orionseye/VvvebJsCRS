@@ -22,10 +22,6 @@ if (! empty($action)) {
 
 				$pdo->commit();
 				
-				// regenerate the temp file with actual content
-				$tempFile = '_temp/temp_' . $serviceID . '.html';
-				file_put_contents($tempFile, $editorContent);
-				
 					if($statement)
 					DrawUtils::drawSuccessPanel('Data saved',false,false);
             break;
@@ -36,10 +32,6 @@ if (! empty($action)) {
 				$statement->execute([$editorContent, $userID]);
 
 				$pdo->commit();
-				
-				// regenerate the temp file with actual content
-				$tempFile = '_temp/temp_' . $serviceID . '.html';
-				file_put_contents($tempFile, $editorContent);
 				
 					if($statement)
 					DrawUtils::drawSuccessPanel('Data saved',false,false);

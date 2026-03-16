@@ -4,6 +4,8 @@ function ucFirst(str) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
+// This block is just a fallback for when the variables aren't defined (i.e. vanilla VvvebJs usage) and never executes.
+// They get overridden by standalone_service_html_detail.php variables
 if (typeof mediaScanUrl === "undefined") {
 	var mediaPath = "./media";
 	var mediaScanUrl = "scan.php";
@@ -664,12 +666,12 @@ _
 
 				
 				
-				actions += '<a href="javascript:void(0);" title="Rename" class="btn btn-outline-primary btn-sm border-0 btn-rename"><i class="la la-edit"></i></a> <a href="javascript:void(0);" title="Delete" class="btn btn-outline-danger btn-sm border-0 btn-delete"><i class="la la-trash"></i></a>';
+				//actions += '<a href="javascript:void(0);" title="Rename" class="btn btn-outline-primary btn-sm border-0 btn-rename"><i class="la la-edit"></i></a> <a href="javascript:void(0);" title="Delete" class="btn btn-outline-danger btn-sm border-0 btn-delete"><i class="la la-trash"></i></a>';
 
 				const event = new CustomEvent("mediaModal:fileActions", {detail: { file: _this.mediaPath + f.path, name, fileType, fileSize, isImage, fileType, actions} });
 				window.dispatchEvent(event);			
 
-				if (isImage) actions += '<a href="javascript:void(0);" class="preview-link p-2"><i class="la la-search-plus"></i></a>';
+				//if (isImage) actions += '<a href="javascript:void(0);" class="preview-link p-2"><i class="la la-search-plus"></i></a>';
 				
 				let file = generateElements('<li class="files">\
 						<label class="form-check">\

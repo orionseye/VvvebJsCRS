@@ -87,9 +87,9 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
     <title>VvvebJs</title>
     
     <link href="css/editor.css" rel="stylesheet">
+    <?php echo "<link href='".ADMIN_TEMPLATE_CSS."vendors/zebra_dialog/flat/zebra_dialog.css' rel='stylesheet' type='text/css' />\n"; ?>
   </head>
 <body class="<?php echo $hasContent ? 'has-content' : 'no-content'; ?>">
-
 
 	<div id="vvveb-builder">
 				<div id="top-panel">
@@ -708,7 +708,7 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 									
 										<!-- Trigger button (always visible) -->
 										<div id="action-trigger">
-											<i class="la la-ellipsis-h"></i>
+											<i title="more actions.." class="la la-ellipsis-h"></i>
 										</div>
 										
 										<!-- Action buttons (hidden by default) -->
@@ -1866,7 +1866,7 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 
 <!-- jquery-->	
 <?php echo "<script type='text/javascript' src='".ADMIN_TEMPLATE_LIMITLESS_JS."main/jquery.min.js'></script>\n"; ?>
-
+<?php echo "<script type='text/javascript' src='".ADMIN_TEMPLATE_JS."vendors/zebra_dialog/zebra_dialog.js'></script>\n"; ?>
 <!-- bootstrap-->
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -1883,7 +1883,10 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 <!-- media gallery -->
 <link href="libs/media/media.css" rel="stylesheet">
 <script>
-window.mediaPath = '../../media';
+window.mediaPath = "<?=SAVE_DIR.'standalone/'.$serviceID.'/editor'?>";
+var mediaScanUrl = 'libs/media/media_handler.php?action=scan&serviceID=<?=$serviceID?>';
+var uploadUrl = 'libs/media/media_handler.php?action=upload&serviceID=<?=$serviceID?>';
+
 Vvveb.themeBaseUrl = 'startup/';
 </script>
 <script src="libs/media/media.js"></script>	
@@ -1987,10 +1990,6 @@ document.querySelector('#toggle-tree-list').addEventListener('click', function()
 
 </script>
 
-
-<!-- DIMI SPECIFIC SCRIPTS -->
-<script type="text/javascript" src="saveimages.js"></script>
-
 <script>
 $(function() {
 	
@@ -2004,31 +2003,25 @@ $(function() {
 		
 		$('#btnSave').prop('disabled', true);
 		
-		// Save images first, then save HTML to DB
-		$(window.FrameDocument.body).saveimages({
-			handler: 'saveimage.php',
-			onComplete: function () {
-				$.ajax({
-					type: 'POST',
-					url: $('#editCon').prop('action'),
-					data: {
-						htmlX: htmlContent,
-						serviceID: $('input[name=serviceID]').val(),
-						userID: $('input[name=userID]').val(),
-						actionX: $('input[name=actionX]').val()
-					},
-					success: function(data) {
-						$('body').append(data);
-						window.location.reload();
-					},
-					error: function() {
-						alert('Save failed');
-						$('#btnSave').prop('disabled', false);
-					}
-				});
+		$.ajax({
+			type: 'POST',
+			url: $('#editCon').prop('action'),
+			data: {
+				htmlX: htmlContent,
+				serviceID: $('input[name=serviceID]').val(),
+				userID: $('input[name=userID]').val(),
+				actionX: $('input[name=actionX]').val()
+			},
+			success: function(data) {
+				$('body').append(data);
+				window.location.reload();
+			},
+			error: function() {
+				alert('Save failed');
+				$('#btnSave').prop('disabled', false);
 			}
 		});
-		$(window.FrameDocument.body).data('saveimages').save();
+
 	});
 
 }); //doc ready 

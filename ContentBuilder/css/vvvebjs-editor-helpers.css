@@ -133,6 +133,17 @@ section:hover .container-fluid > .row > .col {
   outline: 1px dashed rgba(var(--bs-success-rgb), 0.35);
   outline-offset: -2px; }
 
+
+
+/* ============================================
+   DIMI additions
+   ============================================ */
+/* htmlArea Helpers */
+
+#htmlArea {
+  padding-bottom: 20em;
+  }
+
 /* Our super dupper top-parent-row AND its button 
    Note: #add-row-box styles are in editor.css because button lives in main document
 */

@@ -859,7 +859,7 @@ Vvveb.Builder = {
 
 		self.dragElement = null;
 		
-		//self.highlightEnabled = true; Leave that shit commented as it forces re-calculations on highlight and causes our "+" icon to jump.
+		self.highlightEnabled = true;
 		
 		self.leftPanelWidth = document.getElementById("left-panel").clientWidth;
 	},
