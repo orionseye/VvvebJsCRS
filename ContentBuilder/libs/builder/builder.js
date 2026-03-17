@@ -1085,7 +1085,9 @@ Vvveb.Builder = {
 							SelectBox.style.height = ((target.offsetHeight ?? target.clientHeight) + self.selectPadding * 2) + "px";
 							
 							// Also re-position our (orange) .add-row-box
-							let parentRow = target.closest('.row');
+							// NOTE!: Initial positioning is handled at aprox. line 1980
+							// let parentRow = target.closest('.row'); <- this is wrong, it can be any inner row
+							let parentRow = target.closest('.top-parent-row'); // instead, target the real .top-parent-row
 							if (parentRow) {
 								let addRowBox = document.getElementById("add-row-box");
 								if (addRowBox && addRowBox.style.display !== "none") {
@@ -1945,10 +1947,11 @@ Vvveb.Builder = {
 					
 					// Always attach row-level button. (Our orange) .add-row-box
 					let parentRow = targetElement.closest('.row');
-					// Also iterate to previous, if there is a <sction> with class 'row'
-					while (parentRow && parentRow.parentElement.closest('.row')) {
-						parentRow = parentRow.parentElement.closest('.row');
-					}
+						// Also iterate to previous, if there is a <sction> with class 'row'
+						while (parentRow && parentRow.parentElement.closest('.row')) {
+							parentRow = parentRow.parentElement.closest('.row');
+						}
+
 					if (parentRow) {
 						
 						// Remove class from all previously selected rows
@@ -1975,7 +1978,7 @@ Vvveb.Builder = {
 						}
 						
 						// Position the button (using offset() approach like VvvebJS does)
-						// NOTE!: If you make here, make them also at selectBoxPosition = function(event) .. aprox. line 1072, where everything gets re-positioned on viewport change
+						// NOTE!: If you make here, make them also at selectBoxPosition = function(event) .. aprox. line 1088, where everything gets re-positioned on viewport change
 						let pos = offset(parentRow);
 						addRowBox.style.display = "block";
 						addRowBox.style.left = (pos.left - (self.frameDoc.scrollLeft ?? 0) + parentRow.offsetWidth / 2) + "px";
@@ -2236,7 +2239,7 @@ Vvveb.Builder = {
 			// Check: Are we inserting inside a <section> or <header> or <footer>?
             let parentSection = addSectionElement.closest('section, header, footer, main, article, aside');
 			
-			if (!parentSection && !html.trim().startsWith('<div class="row') && !html.trim().startsWith('<section')) {// !!! don't wrap if the HTML already starts with <div class="row">
+			if (!parentSection && !html.trim().startsWith('<div class="row')) {// !!! don't wrap if the HTML already starts with <div class="row">
 				// proceed..
 				// NO section found → we're at top level
 				// Wrap it: "<h1>Title</h1>" becomes:
