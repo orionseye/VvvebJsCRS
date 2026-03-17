@@ -1,4 +1,5 @@
 ﻿.container img { margin:0.4rem 0 0.4rem; } /* Images' default margin */
+section.row { display: block !important; } /* Images' default margin */
 
 /* Default Typography */
 
