@@ -1915,8 +1915,9 @@ Vvveb.themeBaseUrl = 'startup/';
 <script src="libs/builder/components-embeds.js"></script>
 
 
-<!-- sections-->
+<!-- Dimi sections & components -->
 <script src="startup/sections.js"></script>
+<script src="startup/components.js"></script>
 <script src="libs/builder/sections-bootstrap4.js"></script>
 
 <!-- blocks-->

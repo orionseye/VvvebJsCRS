@@ -147,7 +147,11 @@ section:hover .container-fluid > .row > .col {
 /* Our super dupper top-parent-row AND its button 
    Note: #add-row-box styles are in editor.css because button lives in main document
 */
-.top-parent-row {
+.top-parent-row:hover {
   outline: 1px solid #FFD580;
   outline-offset: -2px;
   }
+
+.row:hover > .column {
+  outline: 1px dashed #DFDFDF;
+  outline-offset: -2px; }

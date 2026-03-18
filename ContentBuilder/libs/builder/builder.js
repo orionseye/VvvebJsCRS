@@ -2234,6 +2234,13 @@ Vvveb.Builder = {
 		
 		function addSectionComponent(component, after = true) {
 			
+			// NEW: Check if this is a component proxy
+			// What it does is: shows a component in 'sections', but onClick, it actually adds a component, not a section.
+			if (component.isComponentProxy) {
+				let realComponent = Vvveb.Components.get(component.targetComponent);
+				component = realComponent;  // Swap it out!
+			}	
+			
 			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
 			
 			// Check: Are we inserting inside a <section> or <header> or <footer>?

@@ -75,7 +75,7 @@ document.addEventListener('vvveb.component.removed', function() {
  Helper to wrap components in row/col structure
 ************************************************/
 
-function wrapInGrid(html, colSize = "col-md-12") {
+function wrapInGrid(html, colSize = "column full") {
     return `<div class="row">
         <div class="${colSize}">
             ${html}

@@ -1,17 +1,100 @@
 // ─── CATEGORY MAP ─────────────────────────────────────────────────────────────
 // Just change names here — everything else auto-generates!
-const sectionCategories = {
+const snippetCategories = {
   "120": "Hero",
   "102": "Photos",
   "121": "Features",
   "122": "Pricing",
-  // ... add more as needed
 };
 
+// Define which categories should be wrapped in a <section> tag
+const wrapAsSection = ["120"];
 // ─── SNIPPETS ─────────────────────────────────────────────────────────────────
 // Keep adding snippets here in the simple format — the engine handles the rest.
 const snippets = [
-        
+		{
+		    'image': 'preview/article-01.png',
+		    'category': '120',
+		    'html': `
+			<div class="row">
+				<div class="column full">
+					<h1 class="text-center leading-none size-64 font-extralight">Words From Heart</h1>
+					<div class="spacer height-20"></div>
+					<p class="text-center uppercase tracking-125 size-14" style="color: rgb(102, 102, 102);">By Selma Laursen</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="column full">
+					<div class="spacer height-60"></div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="flex flex-col justify-center column full">
+					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;</p>
+					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;<br></p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="column full">
+					<div class="spacer height-60"></div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="flex flex-col justify-center column full">
+					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;</p>
+					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;<br></p>
+				</div>
+			</div>
+			`	
+		},
+		{
+		    'image': 'preview/000-01.png',
+		    'category': '102',
+			'html': `
+			<div style="display: flex; flex-direction: column; gap: 20px; padding: 20px; border: 2px solid #ccc;">
+				<div style="padding: 20px; background: #f0f0f0; border: 1px solid #ddd;">Element 1</div>
+				<div style="padding: 20px; background: #e0e0e0; border: 1px solid #ddd;">Element 2</div>
+				<div style="padding: 20px; background: #d0d0d0; border: 1px solid #ddd;">Element 3</div>
+				<div style="padding: 20px; background: #c0c0c0; border: 1px solid #ddd;">Element 4</div>
+			</div>
+			`
+		},
+		/*ABANDONED, is now a component in components.js*/
+		{
+		    'image': 'preview/000-02.png',
+		    'category': '102',
+			'html': '',  // Empty - we won't use this
+			'isComponentProxy': true,
+			'targetComponent': 'dimi/flex-container' 
+		},
+		{
+		    'image': 'preview/000-03.png',
+		    'category': '120',
+			html: `
+			<!-- col-* classes -->
+			<div class="row">
+				<div class="column half" style="padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1 (col-6)</div>
+				<div class="column half" style="padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2 (col-6)</div>
+			</div>
+
+			<!-- col-4 (3 columns) -->
+			<div class="row">
+				<div class="column third" style="padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1 (col-4)</div>
+				<div class="column third" style="padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2 (col-4)</div>
+				<div class="column third" style="padding: 20px; background: #ccccff; border: 1px solid #9999ff;">Column 3 (col-4)</div>
+			</div>
+
+			<!-- Mixed cols -->
+			<div class="row">
+				<div class="column fourth" style="padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1 (col-3)</div>
+				<div class="column two-fourth" style="padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2 (col-9)</div>
+			</div>
+			`
+		},
 		{
 		    'image': 'preview/dimi-00.png',
 		    'category': '120',
@@ -77,13 +160,13 @@ const snippets = [
 			</div>
 
 			<div class="row">
-			    <div class="column full d-flex justify-content-start shadow-1" style="max-width: 770px; padding: 0.8em; border-radius: 0.75rem !important;">
-					<div class="col-9">
+				<div class="IncrDecr-flag shadow-1" style="display: flex; flex-direction: row;">
+					<div style="flex: 1; padding: 20px;">
 						<h5 class="font-normal">Teaser headline</h5>
 						<p>This is some important text. You may enter some teaser or important information to point out specials etc</p>
 						<button type="button" class="btn btn-outline-success">Explore</button>
 					</div>
-					<div class="col-3 d-inline-flex justify-content-start align-items-center">
+					<div style="flex: 0 0 33.33%; padding: 20px;">
 						<div class="img-circular" style="width: 6vw; height: 6vw; min-width:100px; min-height:100px;">
 						<img style="height: 100%; width: 100%; object-fit: cover" src="images/travel.png" alt=""></div>
 					</div>
@@ -8620,15 +8703,13 @@ display: inline-flex;
     return name.toLowerCase().replace(/\s+/g, "-");
   }
 
-  function wrapSection(html) {
-    const trimmed = html.trim();
-    return trimmed.startsWith("<section") ? trimmed : `<section>\n${trimmed}\n</section>`;
-  }
-
   for (const snippet of snippets) {
     const catId   = String(snippet.category);
     const catName = categoryMap[catId] || `category-${catId}`;
     const slug    = slugify(catName);
+    
+    // Check if this category is defined as a Section or a Block
+    const isSection = wrapAsSection.includes(catId);
 
     counters[slug] = (counters[slug] || 0) + 1;
     const key = `${slug}/${slug}-${counters[slug]}`;
@@ -8636,10 +8717,22 @@ display: inline-flex;
     if (!groups[catName]) groups[catName] = [];
     groups[catName].push(key);
 
+    // Logic: Only wrap with <section> if it's in the wrapAsSection list
+    let finalHtml = (snippet.html || "").trim();
+    if (isSection) {
+        finalHtml = finalHtml.startsWith("<section") ? finalHtml : `<section>\n${finalHtml}\n</section>`;
+    }
+
     Vvveb.Sections.add(key, {
       name:  `${catName} ${counters[slug]}`,
       image: Vvveb.themeBaseUrl + "/" + (snippet.image || ""),
-      html:  wrapSection(snippet.html || ""),
+      html:  finalHtml,
+      type:  isSection ? 'section' : 'block', // Meta-data for UI filtering
+	  /* NEW: Pass through proxy properties if they exist
+	     When snippet has isComponentProxy: true, it gets registered with the Section and will be available in addSectionComponent(component) to check!
+	  */
+	  isComponentProxy: snippet.isComponentProxy || false,
+	  targetComponent: snippet.targetComponent || null
     });
   }
 
@@ -8647,4 +8740,4 @@ display: inline-flex;
     Vvveb.SectionsGroup[catName] = keys;
   }
 
-})(snippets, sectionCategories);
+})(snippets, snippetCategories);
