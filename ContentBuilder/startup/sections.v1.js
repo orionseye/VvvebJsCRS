@@ -1,14 +1,13 @@
 // ─── CATEGORY MAP ─────────────────────────────────────────────────────────────
 // Just change names here — everything else auto-generates!
-const snippetCategories = {
+const sectionCategories = {
   "120": "Hero",
   "102": "Photos",
   "121": "Features",
   "122": "Pricing",
+  // ... add more as needed
 };
 
-// Define which categories should be wrapped in a <section> tag
-const wrapAsSection = ["120"];
 // ─── SNIPPETS ─────────────────────────────────────────────────────────────────
 // Keep adding snippets here in the simple format — the engine handles the rest.
 const snippets = [
@@ -53,7 +52,7 @@ const snippets = [
 		},
 		{
 		    'image': 'preview/000-01.png',
-		    'category': '102',
+		    'category': '120',
 			'html': `
 			<div style="display: flex; flex-direction: column; gap: 20px; padding: 20px; border: 2px solid #ccc;">
 				<div style="padding: 20px; background: #f0f0f0; border: 1px solid #ddd;">Element 1</div>
@@ -63,13 +62,29 @@ const snippets = [
 			</div>
 			`
 		},
-		/*ABANDONED, is now a component in components.js*/
 		{
-			'image': 'preview/000-02.png',
+		    'image': 'preview/000-02.png',
 		    'category': '120',
-			'html': '',  // Empty - we won't use this
-			'isComponentProxy': true,
-			'targetComponent': 'dimi/flex-container' 
+			'html': `
+			<!-- Test 1: Equal auto-flex columns (most common) -->
+			<div class="IncrDecr-flag" style="display: flex; flex-direction: row;">
+				<div style="flex: 1; padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1</div>
+				<div style="flex: 1; padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2</div>
+				<div style="flex: 1; padding: 20px; background: #ccccff; border: 1px solid #9999ff;">Column 3</div>
+			</div>
+
+			<!-- Test 2: Bootstrap-style (explicit percentages) -->
+			<div class="IncrDecr-flag" style="display: flex; flex-direction: row;">
+				<div style="flex: 1; padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1 (50%)</div>
+				<div style="flex: 1; padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2 (50%)</div>
+			</div>
+
+			<!-- Test 3: Mixed (one explicit, one auto) -->
+			<div class="IncrDecr-flag" style="display: flex; flex-direction: row;">
+				<div style="flex: 0 0 33.33%; padding: 20px; background: #ffcccc; border: 1px solid #ff9999;">Column 1 (33%)</div>
+				<div style="flex: 1; padding: 20px; background: #ccffcc; border: 1px solid #99ff99;">Column 2 (auto)</div>
+			</div>
+			`
 		},
 		{
 		    'image': 'preview/000-03.png',
@@ -8703,13 +8718,15 @@ display: inline-flex;
     return name.toLowerCase().replace(/\s+/g, "-");
   }
 
+  function wrapSection(html) {
+    const trimmed = html.trim();
+    return trimmed.startsWith("<section") ? trimmed : `<section>\n${trimmed}\n</section>`;
+  }
+
   for (const snippet of snippets) {
     const catId   = String(snippet.category);
     const catName = categoryMap[catId] || `category-${catId}`;
     const slug    = slugify(catName);
-    
-    // Check if this category is defined as a Section or a Block
-    const isSection = wrapAsSection.includes(catId);
 
     counters[slug] = (counters[slug] || 0) + 1;
     const key = `${slug}/${slug}-${counters[slug]}`;
@@ -8717,22 +8734,10 @@ display: inline-flex;
     if (!groups[catName]) groups[catName] = [];
     groups[catName].push(key);
 
-    // Logic: Only wrap with <section> if it's in the wrapAsSection list
-    let finalHtml = (snippet.html || "").trim();
-    if (isSection) {
-        finalHtml = finalHtml.startsWith("<section") ? finalHtml : `<section>\n${finalHtml}\n</section>`;
-    }
-
     Vvveb.Sections.add(key, {
       name:  `${catName} ${counters[slug]}`,
       image: Vvveb.themeBaseUrl + "/" + (snippet.image || ""),
-      html:  finalHtml,
-      type:  isSection ? 'section' : 'block', // Meta-data for UI filtering
-	  /* NEW: Pass through proxy properties if they exist
-	     When snippet has isComponentProxy: true, it gets registered with the Section and will be available in addSectionComponent(component) to check!
-	  */
-	  isComponentProxy: snippet.isComponentProxy || false,
-	  targetComponent: snippet.targetComponent || null
+      html:  wrapSection(snippet.html || ""),
     });
   }
 
@@ -8740,4 +8745,4 @@ display: inline-flex;
     Vvveb.SectionsGroup[catName] = keys;
   }
 
-})(snippets, snippetCategories);
+})(snippets, sectionCategories);
