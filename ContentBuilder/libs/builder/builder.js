@@ -1784,7 +1784,7 @@ Vvveb.Builder = {
 						 left:${pos.left - (self.frameDoc.scrollLeft ?? 0)}px;
 						 width:${width}px; 
 						 height:${height}px;
-						 display:${event.target.hasAttribute('contenteditable') ? "none":""};
+						 display:${event.target.hasAttribute('contenteditable') || event.isTrusted ? "none":"block"};
 						 border:${self.isDragging ? "1px dashed #0d6efd":""};
 					`);
 
