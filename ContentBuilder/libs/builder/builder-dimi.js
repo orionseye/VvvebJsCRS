@@ -76,7 +76,7 @@ document.addEventListener('vvveb.component.removed', function() {
 ************************************************/
 
 function wrapInGrid(html, colSize = "column full") {
-    return `<div class="row">
+    return `<div class="row top-parent-row">
         <div class="${colSize}">
             ${html}
         </div>
@@ -120,3 +120,117 @@ Vvveb.Builder.selectNode = function(node) {
 	// Call original function
 	originalSelectNode.call(this, node);
 };
+
+/*****************************************************
+  Create action-buttons for row + column
+*****************************************************/
+
+function createActionToolbar(containerId, buttons) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.id = containerId + '-actions';
+    actionsDiv.className = 'rowCol-box-actions';
+    
+    // Gear trigger (always visible)
+    const trigger = document.createElement('a');
+    trigger.href = '';
+    trigger.title = 'More actions';
+    trigger.innerHTML = '<i class="la la-cog me-1"></i>';
+    trigger.className = 'rowCol-action-trigger';
+    
+    // Popup container (hidden by default)
+    const popup = document.createElement('div');
+    popup.id = containerId + '-popup';
+    popup.className = 'rowCol-action-popup';
+    
+    const buttonConfigs = {
+        'up': { icon: 'la la-arrow-up', title: 'Move up' },
+        'down': { icon: 'la la-arrow-down', title: 'Move down' },
+        'left': { icon: 'la la-arrow-left', title: 'Move left' },
+        'right': { icon: 'la la-arrow-right', title: 'Move right' },
+        'clone': { icon: 'icon-copy-outline', title: 'Clone' }
+    };
+    
+    buttons.forEach(btnType => {
+        if (btnType === 'delete') return; // Skip delete in popup
+        const config = buttonConfigs[btnType];
+        if (config) {
+            const btn = document.createElement('a');
+            btn.id = containerId + '-' + btnType + '-btn';
+            btn.href = '';
+            btn.title = config.title;
+            btn.innerHTML = `<i class="${config.icon}"></i>`;
+            popup.appendChild(btn);
+        }
+    });
+    
+    // Delete button (always visible)
+    const deleteBtn = document.createElement('a');
+    deleteBtn.id = containerId + '-delete-btn';
+    deleteBtn.href = '';
+    deleteBtn.title = 'Delete';
+    deleteBtn.innerHTML = '<i class="icon-trash-outline"></i>';
+    deleteBtn.className = 'rowCol-delete-btn';
+    
+    // Toggle popup on gear click
+	trigger.addEventListener('click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		popup.classList.toggle('show');
+	});
+    
+    // Close popup when clicking elsewhere
+	document.addEventListener('click', function(e) {
+		if (!trigger.contains(e.target) && !popup.contains(e.target)) {
+			popup.classList.remove('show');
+		}
+	});
+    
+    actionsDiv.appendChild(trigger);
+    actionsDiv.appendChild(popup);
+    actionsDiv.appendChild(deleteBtn);
+    container.appendChild(actionsDiv);
+}
+
+
+
+/*****************************************************
+  Attach Action Handlers for row + column action-buttons
+  by using VvvebeJS's native buttons (already in builder.js)
+*****************************************************/
+function attachActionHandlers() {
+    // Generic handler
+    function delegateToExisting(targetSelector, buttonId, shouldRestore = true) {
+        return function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let target = Vvveb.Builder.selectedEl.closest(targetSelector);
+            if (target) {
+                let original = Vvveb.Builder.selectedEl;
+                Vvveb.Builder.selectedEl = target;
+                document.getElementById(buttonId).click();
+                if (shouldRestore) Vvveb.Builder.selectedEl = original;
+            }
+        };
+    }
+	
+	// Top-parent-row handlers
+	document.getElementById("top-parent-row-box-up-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'up-btn'));
+	document.getElementById("top-parent-row-box-down-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'down-btn'));
+	document.getElementById("top-parent-row-box-clone-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'clone-btn'));
+	document.getElementById("top-parent-row-box-delete-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'delete-btn', false));
+
+    // Column handlers
+    document.getElementById("column-box-up-btn").addEventListener("click", delegateToExisting('.column', 'up-btn'));
+    document.getElementById("column-box-down-btn").addEventListener("click", delegateToExisting('.column', 'down-btn'));
+    document.getElementById("column-box-clone-btn").addEventListener("click", delegateToExisting('.column', 'clone-btn'));
+    document.getElementById("column-box-delete-btn").addEventListener("click", delegateToExisting('.column', 'delete-btn', false));
+    
+    // Row handlers
+    document.getElementById("row-box-up-btn").addEventListener("click", delegateToExisting('.row', 'up-btn'));
+    document.getElementById("row-box-down-btn").addEventListener("click", delegateToExisting('.row', 'down-btn'));
+    document.getElementById("row-box-clone-btn").addEventListener("click", delegateToExisting('.row', 'clone-btn'));
+    document.getElementById("row-box-delete-btn").addEventListener("click", delegateToExisting('.row', 'delete-btn', false));
+}

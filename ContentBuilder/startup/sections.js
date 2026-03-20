@@ -31,8 +31,10 @@ const snippets = [
 			</div>
 			
 			<div class="row">
-				<div class="flex flex-col justify-center column full">
+				<div class="flex flex-col justify-center column half">
 					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;</p>
+				</div>
+				<div class="flex flex-col justify-center column half">
 					<p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.&nbsp;Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.&nbsp;<br></p>
 				</div>
 			</div>

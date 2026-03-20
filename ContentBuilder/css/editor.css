@@ -18396,7 +18396,8 @@ body {
     top: 0px;
     left: 0px;
     display: none;
-    transition: all 0.05s; }
+    transition: all 0.05s; 
+	z-index: 2;}
   #vvveb-builder #drop-highlight-box {
     position: absolute;
     border: 2px solid var(--bs-primary);
@@ -18417,7 +18418,7 @@ body {
     border-radius: 0 0 3px 3px; }
   #vvveb-builder #select-box {
     position: absolute;
-    border: 1px solid var(--bs-teal);
+    border: 1px dotted var(--bs-teal);
     color: var(--bs-white);
     background: rgba(var(--bs-teal), 0.1);
     width: 0px;
@@ -19828,7 +19829,7 @@ video, audio {
    ============================================ */
   #vvveb-builder #select-actions {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     right: 0;
     bottom: -22px;
     padding: 0px 0px;
@@ -19856,8 +19857,11 @@ video, audio {
     color: #333;
 }
 
-/* Action buttons popup */
-#action-buttons {
+/* Action buttons (popups)
+ * Includes Vvvbe native + custom popups
+ * for Culumns & Row actions
+*/
+#action-buttons, .rowCol-action-popup {
     display: none;
     position: absolute;
     top: 30px;
@@ -19869,15 +19873,18 @@ video, audio {
     gap: 6px;
     min-width: 80px;
     max-width: 200px;
-    z-index: 10001;
+    z-index: 2;
 }
+		#row-box-popup.rowCol-action-popup {
+			left: 10px;
+		}
 
-#action-buttons.show {
+#action-buttons.show, .rowCol-action-popup.show {
     display: flex;
 }
 
 /* Style the action buttons */
-#action-buttons a {
+#action-buttons a, .rowCol-action-popup a {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -19889,12 +19896,12 @@ video, audio {
     color: #333;
 }
 
-#action-buttons a:hover {
+#action-buttons a:hover, .rowCol-action-popup a:hover {
     background: #e9ecef;
     border-color: #ccc;
 }
 
-#action-buttons a i {
+#action-buttons a i, .rowCol-action-popup a i {
     font-size: 16px;
 }
 
@@ -19906,11 +19913,11 @@ video, audio {
     pointer-events: none !important;
 }
 
-#action-buttons #delete-btn {
+#action-buttons #delete-btn, .rowCol-delete-btn {
     color: #dc3545 !important;
 }
 
-#action-buttons #delete-btn:hover {
+#action-buttons #delete-btn:hover, .rowCol-delete-btn:hover {
     background: #fff5f5 !important;
     border-color: #dc3545 !important;
 }
@@ -19919,37 +19926,75 @@ video, audio {
    Our super dupper top-parent-row AND its button 
    Note: .top-parent-row styles are in vvvebjs-editor-helpers.css
    ============================================ */
-#add-row-box {
+
+#top-parent-row-box {
     position: absolute;
-	width: 20px;
+    border: 1px solid #84848433;
+    pointer-events: none;
+    display: none;
+}
+
+#top-parent-row-box a {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
     height: 20px;
     background: #FFD580;
     border: 1px solid #FFD580;
     border-radius: 5%;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 2;
-	pointer-events: auto;
-	display: none;
-}
-
-#add-row-box a {
-    color: white;
-    font-size: 14px;
-    line-height: 1;
-    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    margin: 0;
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+    pointer-events: auto;
+    cursor: pointer;
 }
-
-#add-row-box:hover {
-    background: white;
+#top-parent-row-box-actions {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    gap: 4px;
+    pointer-events: auto;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px;
 }
-
-#add-row-box:hover a {
-    color: #FFD580;
+#row-box {
+    position: absolute;
+    border: 1px solid #84848433;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+}
+#row-box-actions {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 5px);
+    display: flex;
+    pointer-events: auto;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px;
+}
+#column-box {
+    position: absolute;
+    border: 1px solid #00da89;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+}
+#column-box-actions {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    display: flex;
+    pointer-events: auto;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px;
 }
