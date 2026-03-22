@@ -1657,11 +1657,30 @@ Vvveb.Builder = {
 			let parentRow = node.closest('.row:not(.top-parent-row)');
 			let RowBox = document.getElementById("row-box");
 			if (parentRow) {
+				// Attach click handler ONCE (not on every click)
+				// Attach click handler to RowBox, not parentRow
+				if (!RowBox.hasClickHandler) {
+					RowBox.addEventListener('click', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						
+						let clickedRow = this.rowElement;
+						if (clickedRow) {
+							self.selectedEl = clickedRow;
+							addSectionElement = clickedRow;
+							self.forceWrapInRow = true; // NEW: Force wrap  with wrapInGrid()
+						}
+						
+						document.getElementById("add-section-btn").click();
+					});
+					RowBox.hasClickHandler = true;
+				}
 				let rowPos = offset(parentRow);
 				RowBox.style.top = (rowPos.top - (self.frameDoc.scrollTop ?? 0)) + "px";
 				RowBox.style.left = (rowPos.left - (self.frameDoc.scrollLeft ?? 0)) + "px";
 				RowBox.style.width = parentRow.offsetWidth + "px";
 				RowBox.style.height = parentRow.offsetHeight + "px";
+				RowBox.rowElement = parentRow; // Store reference to this specific row
 				RowBox.style.display = "block";
 				
 				let RowActions = document.getElementById("row-box-actions");
@@ -2310,6 +2329,13 @@ Vvveb.Builder = {
 				html = wrapInGrid(html);
 			}
 			// If YES section found → use raw HTML as-is
+			
+			// NEW: Force wrap if triggered from (inner) row-box button
+			let forceWrap = self.forceWrapInRow;
+			if (forceWrap && !/^<div class=["']row/.test(html.trim())) { //This matches both class="row" and class='row'
+				self.forceWrapInRow = false; // Reset flag
+				html = wrapInGrid(html).replace('row top-parent-row', 'row');
+			}
 			
 			let node = generateElements(html)[0];
 			

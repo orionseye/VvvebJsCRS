@@ -773,11 +773,12 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 							
 							<!-- My (orange) top-parent-row box outline -->
 							<div id="top-parent-row-box">
-								<a href="" class="tpr-addRow" title="Add row"><i class="la la-plus"></i></a>
+								<a href="" class="tpr-addRow" title="Add new block or section"><i class="la la-plus"></i></a>
 								<!-- JS will append <div id="top-parent-row-box-actions"></div> here -->
 							</div>
 
 							<div id="row-box">
+								<a href="" class="r-addRow" title="Add row"><i class="la la-plus"></i></a>
 								<!-- JS will append <div id="row-box-actions"></div> here -->
 							</div>
 							
