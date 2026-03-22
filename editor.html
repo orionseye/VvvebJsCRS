@@ -65,10 +65,6 @@
 						  <i class="la la-download"></i>
 					  </button>
 
-                      <button class="btn btn-light" title="Toggle right column" id="dimi-toggle-right-column-btn" data-vvveb-action="toggleRightColumn" data-bs-toggle="button" aria-pressed="false">
-						  <i class="icon-settings-outline"></i>
-					  </button>
-					  
 					</div>
 					
 								
@@ -504,13 +500,13 @@
 								  <span class="name"></span>
 								  <span class="type"></span>
 								</div>
-							</div>
-
-							<div id="select-box">
 								
 								<div id="section-actions">
 									<a id="add-section-btn" href="" title="Add element"><i class="la la-plus"></i></a>
 								</div>
+							</div>
+
+							<div id="select-box">
 
 								<div id="wysiwyg-editor" class="default-editor">
 										<!--
@@ -630,41 +626,16 @@
 								</div>
 
 								<div id="select-actions">
-								
-									<!-- Trigger button (always visible) -->
-									<div id="action-trigger">
-										<i class="la la-ellipsis-h"></i>
-									</div>
+									<a id="drag-btn" href="" title="Drag element"><i class="la la-arrows-alt"></i></a>
+									<a id="parent-btn" href="" title="Select parent" class="la-rotate-180"><i class="la la-level-up-alt"></i></a>
 									
-									<!-- Action buttons (hidden by default) -->
-									<div id="action-buttons">
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="drag-btn" href="" title="Drag element" class="d-none"><i class="la la-arrows-alt"></i></a>
-										<a id="parent-btn" href="" title="Select parent"><i class="la la-level-up-alt"></i></a>
-										</div>
-										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
-										<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
-										<a id="left-btn" href="" title="Move element left" style="display:none;"><i class="la la-arrow-left"></i></a>
-										<a id="right-btn" href="" title="Move element right" style="display:none;"><i class="la la-arrow-right"></i></a>
-										</div>
-										
-										<div style="display: flex; flex: 0 0 100%; flex-wrap: wrap; gap: 6px;">
-										<a id="decrease-btn" href="" title="Decrease width" style="display:none;"><i class="la la-minus"></i></a>
-										<a id="increase-btn" href="" title="Increase width" style="display:none;"><i class="la la-plus"></i></a>
-										</div>
-										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
-										<a id="save-reusable-btn" href="" title="Save as reusable"><i class="icon-save-outline"></i></a>
-										</div>
-										
-										<div style="display: flex; flex-wrap: wrap; gap: 6px;">
-										<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
-										<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
-										</div>
-									</div>
+									<a id="up-btn" href="" title="Move element up"><i class="la la-arrow-up"></i></a>
+									<a id="down-btn" href="" title="Move element down"><i class="la la-arrow-down"></i></a>
+									<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
+
+									<a id="save-reusable-btn" href="" title="Save as reusable" class="mx-2"><i class="icon-save-outline"></i></a>
+									<a id="clone-btn" href="" title="Clone element"><i class="icon-copy-outline"></i></a>
+									<a id="delete-btn" href="" title="Remove element"><i class="icon-trash-outline"></i></a>
 								</div>
 								
 								<div class="resize">
@@ -696,11 +667,8 @@
 
 									<div class="header">							
 										<ul class="nav nav-tabs" id="box-elements-tabs" role="tablist">
-										  <li class="nav-item sections-tab">
-											<a class="nav-link px-3 active" data-bs-toggle="tab" href="#dimis-sections-list" role="tab" aria-controls="sections" aria-selected="true"><i class="icon-copy-outline"></i><small>Section</small></a>
-										  </li>
 										  <li class="nav-item component-tab">
-											<a class="nav-link px-3" id="box-components-tab" data-bs-toggle="tab" href="#box-components" role="tab" aria-controls="components" aria-selected="false"><i class="icon-cube-outline"></i><small>Components</small></a>
+											<a class="nav-link px-3 active" id="box-components-tab" data-bs-toggle="tab" href="#box-components" role="tab" aria-controls="components" aria-selected="true"><i class="icon-cube-outline"></i><small>Components</small></a>
 										  </li>
 										  <li class="nav-item sections-tab">
 											<a class="nav-link px-3" id="box-sections-tab" data-bs-toggle="tab" href="#box-blocks" role="tab" aria-controls="blocks" aria-selected="false"><i class="icon-copy-outline"></i><small>Blocks</small></a>
@@ -719,47 +687,21 @@
 										<div class="me-4 small mt-2 float-end">
 											
 											<div class="form-check d-inline-block small me-1">
-											  <input type="radio" id="add-section-insert-mode-after" value="after" checked="checked" name="add-section-insert-mode" class="form-check-input">
-											  <label class="form-check-label" for="add-section-insert-mode-after">After</label>
-											</div>
+												  <input type="radio" id="add-section-insert-mode-after" value="after" checked="checked" name="add-section-insert-mode" class="form-check-input">
+												 <label class="form-check-label" for="add-section-insert-mode-after">After</label>
+												</div>
 												
-											<!-- div class="form-check d-inline-block small">
-											  <input type="radio" id="add-section-insert-mode-inside" value="inside" name="add-section-insert-mode" class="form-check-input">
-											  <label class="form-check-label" for="add-section-insert-mode-inside">Inside</label>
-											</div -->
+												<div class="form-check d-inline-block small">
+												  <input type="radio" id="add-section-insert-mode-inside" value="inside" name="add-section-insert-mode" class="form-check-input">
+													<label class="form-check-label" for="add-section-insert-mode-inside">Inside</label>
+												</div>
 										
-										</div>
+											</div>
 											
 										</div>
 										
 										<div class="tab-content">
-										  <!-- dimi's sections -->
-										  <div class="tab-pane show active" id="dimis-sections-list" role="tabpanel" aria-labelledby="dimis-sections-tab">
-											  
-											   <div class="search">
-													  <div class="expand">
-														  <button class="text-sm" title="Expand All" data-vvveb-action="expand"><i class="la la-plus"></i></button>
-														  <button title="Collapse all" data-vvveb-action="collapse"><i class="la la-minus"></i></button> 
-													  </div>	
-
-													  <input class="form-control block-search" placeholder="Search blocks" type="text" data-vvveb-action="search" data-vvveb-on="keyup">
-													  <button class="clear-backspace"  data-vvveb-action="clearSearch">
-														  <i class="la la-times"></i>
-													  </button>
-												  </div>
-
-												<div class="overflow-y-auto mb-5">
-												  <div>
-													  
-													<ul class="sections-list clearfix"  data-type="addbox">
-													</ul>
-
-												  </div>
-												</div>
-										  
-										  </div>
-										  <!-- // dimi's sections -->
-										  <div class="tab-pane" id="box-components" role="tabpanel" aria-labelledby="components-tab">
+										  <div class="tab-pane show active" id="box-components" role="tabpanel" aria-labelledby="components-tab">
 											  
 											   <div class="search">
 													  <div class="expand">
@@ -1780,7 +1722,6 @@
 
 <!-- builder code-->
 <script src="libs/builder/builder.js"></script>	
-<script src="libs/builder/builder-dimi.js"></script>	
 <!-- undo manager-->
 <script src="libs/builder/undo.js"></script>	
 <!-- inputs-->
@@ -2308,7 +2249,6 @@ let pages = defaultPages;
 let firstPage = Object.keys(pages)[0];
 Vvveb.Builder.init(pages[firstPage]["url"], function() {
 	//load code after page is loaded here
-	Vvveb.TreeList.loadComponents();
 });
 
 Vvveb.Gui.init();
@@ -2320,18 +2260,8 @@ Vvveb.CssEditor.init();
 
 Vvveb.FileManager.addPages(pages);
 Vvveb.FileManager.loadPage(pages[firstPage]["name"]);
-Vvveb.Gui.toggleLeftColumn(false);
 Vvveb.Gui.toggleRightColumn(false);
-Vvveb.Gui.toggleFileManager(false);
-Vvveb.Gui.toggleTreeList(false);
 Vvveb.Breadcrumb.init();
-
-// Tree navigator: Load components when user toggles it visible
-// Needs setTimeout because the panel must be displayed (CSS transition complete)
-// before TreeList can properly render the DOM tree structure into it
-document.querySelector('#toggle-tree-list').addEventListener('click', function() {
-    setTimeout(() => Vvveb.TreeList.loadComponents(), 100);
-});
 </script>
 </body>
 </html>

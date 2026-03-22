@@ -859,7 +859,7 @@ Vvveb.Builder = {
 
 		self.dragElement = null;
 		
-		//self.highlightEnabled = true; Leave that shit commented as it forces re-calculations on highlight and causes our "+" icon to jump.
+		self.highlightEnabled = true;
 		
 		self.leftPanelWidth = document.getElementById("left-panel").clientWidth;
 	},
@@ -1046,7 +1046,7 @@ Vvveb.Builder = {
 				
 				highlightBox.style.display = "none"; 
 				
-				/*
+
 				window.FrameWindow.addEventListener("beforeunload", function(event) {
 					if (Vvveb.Undo.undoIndex >= 0) {
 						let dialogText = "You have unsaved changes";
@@ -1054,7 +1054,6 @@ Vvveb.Builder = {
 						return dialogText;
 					}
 				});
-				*/
 				
 				window.FrameWindow.addEventListener("unload", function(event) {
 					document.querySelector(".loading-message").classList.add("active");
@@ -1245,228 +1244,6 @@ Vvveb.Builder = {
 									newNextSibling: newNextSibling});
 	},
 
-	// Dimis moveNodeLeft
-	moveNodeLeft: function(node) {
-		if (!node) {
-			node = Vvveb.Builder.selectedEl;
-		}
-
-		const parent = node.parentNode;
-		const oldNextSibling = node.nextSibling;
-		const prevSibling = node.previousElementSibling;
-		
-		// Only move if there's a previous sibling AND parent is flex/grid row
-		if (prevSibling && Vvveb.Builder._isHorizontalLayout(parent)) {
-			prevSibling.before(node);
-			
-			Vvveb.Builder.selectNode(node);
-			
-			Vvveb.Undo.addMutation({
-				type: 'move', 
-				target: node,
-				oldParent: parent,
-				newParent: parent,
-				oldNextSibling: oldNextSibling,
-				newNextSibling: node.nextSibling
-			});
-		}
-	},
-
-	// Dimis moveNodeRight
-	moveNodeRight: function(node) {
-		if (!node) {
-			node = Vvveb.Builder.selectedEl;
-		}
-
-		const parent = node.parentNode;
-		const oldNextSibling = node.nextSibling;
-		const nextSibling = node.nextElementSibling;
-		
-		// Only move if there's a next sibling AND parent is flex/grid row
-		if (nextSibling && Vvveb.Builder._isHorizontalLayout(parent)) {
-			nextSibling.after(node);
-			
-			Vvveb.Builder.selectNode(node);
-			
-			Vvveb.Undo.addMutation({
-				type: 'move', 
-				target: node,
-				oldParent: parent,
-				newParent: parent,
-				oldNextSibling: oldNextSibling,
-				newNextSibling: node.nextSibling
-			});
-		}
-	},
-
-		// Dimis HELPER FUNCTIONS for moving items left/right
-		_isHorizontalLayout: function(element) {
-			if (!element) return false;
-			
-			const frameWindow = element.ownerDocument.defaultView;
-			const styles = frameWindow.getComputedStyle(element);
-			const display = styles.display;
-			
-			// Check if flex with row direction
-			if (display === 'flex' || display === 'inline-flex') {
-				const flexDirection = styles.flexDirection;
-				return flexDirection === 'row' || flexDirection === 'row-reverse';
-			}
-			
-			// Check if grid (assumed horizontal by default)
-			if (display === 'grid' || display === 'inline-grid') {
-				return styles.gridTemplateColumns !== 'none';
-			}
-			
-			return false;
-		},
-
-		_canMoveLeft: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			return node.previousElementSibling && Vvveb.Builder._isHorizontalLayout(parent);
-		},
-
-		_canMoveRight: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			return node.nextElementSibling && Vvveb.Builder._isHorizontalLayout(parent);
-		},
-
-	/* Dimis increase/decrease Column
-	 * Only for flex without gaps, does not work on 
-	 * (a) flex parent with gaps 
-	 * (b) columns which do not fill parent's available space!
-	*/
-	increaseColumn: function(node) {
-		if (!node) node = Vvveb.Builder.selectedEl;
-		
-		const parent = node.parentNode;
-		if (!Vvveb.Builder._isHorizontalLayout(parent)) return;
-		
-		const oldStyle = node.getAttribute('style');
-		
-		// Calculate current width based on actual rendered size
-		const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-		
-		// Increase by 10%, cap at 90%
-		const newWidth = Math.min(currentWidth + 10, 90);
-		
-		// Set siblings to flex: 1 so they fill remaining space
-		Array.from(parent.children).forEach(child => {
-			if (child !== node) {
-				child.style.flex = '1';
-				child.style.width = '';
-				child.style.flexBasis = '';
-			}
-		});
-		
-		// Set ONLY current node's explicit width
-		node.style.flex = `0 0 ${newWidth}%`;
-		
-		Vvveb.Builder.selectNode(node);
-		
-		Vvveb.Undo.addMutation({
-			type: 'attributes',
-			target: node,
-			attributeName: 'style',
-			oldValue: oldStyle
-		});
-	},
-
-	decreaseColumn: function(node) {
-		if (!node) node = Vvveb.Builder.selectedEl;
-		
-		const parent = node.parentNode;
-		if (!Vvveb.Builder._isHorizontalLayout(parent)) return;
-		
-		const oldStyle = node.getAttribute('style');
-		
-		// Calculate current width based on actual rendered size
-		const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-		
-		// Decrease by 10%, cap at 10%
-		const newWidth = Math.max(currentWidth - 10, 10);
-		
-		// Set siblings to flex: 1 so they fill remaining space
-		Array.from(parent.children).forEach(child => {
-			if (child !== node) {
-				child.style.flex = '1';
-				child.style.width = '';
-				child.style.flexBasis = '';
-			}
-		});
-		
-		// Set ONLY current node's explicit width
-		node.style.flex = `0 0 ${newWidth}%`;
-		
-		Vvveb.Builder.selectNode(node);
-		
-		Vvveb.Undo.addMutation({
-			type: 'attributes',
-			target: node,
-			attributeName: 'style',
-			oldValue: oldStyle
-		});
-	},
-
-		// Dimis HELPER FUNCTIONS for increase/decrease Column
-		_canIncreaseColumn: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			if (!Vvveb.Builder._isHorizontalLayout(parent)) return false;
-			
-			// Check 0: Only work with OUR flex containers
-			if (!parent.classList.contains('IncrDecr-flag')) return false;
-			
-			// Check 1: No gaps allowed
-			const parentStyle = getComputedStyle(parent);
-			const gap = parseFloat(parentStyle.gap || parentStyle.columnGap || 0);
-			if (gap > 0) return false;
-			
-			// Check 2: Children must fill 100% of parent width (within 2% tolerance)
-			let totalChildWidth = 0;
-			Array.from(parent.children).forEach(child => {
-				totalChildWidth += child.offsetWidth;
-			});
-			const parentWidth = parent.offsetWidth;
-			const fillPercentage = (totalChildWidth / parentWidth) * 100;
-			
-			if (fillPercentage < 98 || fillPercentage > 102) return false;
-			
-			// Check 3: Current column hasn't reached max (90%)
-			const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-			return currentWidth < 90;
-		},
-
-		_canDecreaseColumn: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			if (!Vvveb.Builder._isHorizontalLayout(parent)) return false;
-			
-			// Check 0: Only work with OUR flex containers
-			if (!parent.classList.contains('IncrDecr-flag')) return false;
-			
-			// Check 1: No gaps allowed
-			const parentStyle = getComputedStyle(parent);
-			const gap = parseFloat(parentStyle.gap || parentStyle.columnGap || 0);
-			if (gap > 0) return false;
-			
-			// Check 2: Children must fill 100% of parent width (within 2% tolerance)
-			let totalChildWidth = 0;
-			Array.from(parent.children).forEach(child => {
-				totalChildWidth += child.offsetWidth;
-			});
-			const parentWidth = parent.offsetWidth;
-			const fillPercentage = (totalChildWidth / parentWidth) * 100;
-			
-			if (fillPercentage < 98 || fillPercentage > 102) return false;
-			
-			// Check 3: Current column hasn't reached min (10%)
-			const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-			return currentWidth > 10;
-		},
-		
 	cloneNode:  function(node) {
 		if (!node) {
 			node = Vvveb.Builder.selectedEl;
@@ -1508,35 +1285,9 @@ Vvveb.Builder = {
 		if (elementType[1] == "BODY") {
 			SelectActions.style.display = "none";
 			AddSectionBtn.style.display = "none";
-			SelectBox.style.border = "none"; // Avoid outlining body, it's stupid
 		} else {
 			SelectActions.style.display = "";
 			AddSectionBtn.style.display = "";
-			SelectBox.style.border = "";  // Reset border for other elements
-		}
-
-		// Dimis Show/hide left/right buttons based on layout
-		const leftBtn = document.getElementById("left-btn");
-		const rightBtn = document.getElementById("right-btn");
-		
-		if (leftBtn && rightBtn) {
-			const canMoveLeft = Vvveb.Builder._canMoveLeft(node);
-			const canMoveRight = Vvveb.Builder._canMoveRight(node);
-			
-			leftBtn.style.display = canMoveLeft ? "" : "none";
-			rightBtn.style.display = canMoveRight ? "" : "none";
-		}
-		
-		// Dimis Show/hide increase/decrease buttons
-		const increaseBtn = document.getElementById("increase-btn");
-		const decreaseBtn = document.getElementById("decrease-btn");
-
-		if (increaseBtn && decreaseBtn) {
-			const canIncrease = Vvveb.Builder._canIncreaseColumn(node);
-			const canDecrease = Vvveb.Builder._canDecreaseColumn(node);
-			
-			increaseBtn.style.display = canIncrease ? "" : "none";
-			decreaseBtn.style.display = canDecrease ? "" : "none";
 		}
 
 		let target = node;
@@ -1751,7 +1502,7 @@ Vvveb.Builder = {
 						 left:${pos.left - (self.frameDoc.scrollLeft ?? 0)}px;
 						 width:${width}px; 
 						 height:${height}px;
-						 display:${event.target.hasAttribute('contenteditable') ? "none":""};
+						 display:${event.target.hasAttribute('contenteditable') ? "none":"block"};
 						 border:${self.isDragging ? "1px dashed #0d6efd":""};
 					`);
 
@@ -1878,21 +1629,6 @@ Vvveb.Builder = {
 							return true;
 						}
 					}
-					
-					let targetElement = event.target;
-					
-					// Check if we're inside a section
-					let parentSection = targetElement.closest('section, header, footer, main, article, aside');
-					
-					if (!parentSection) {
-						// Outside section → auto-select row
-						let parentRow = targetElement.closest('.row');
-						if (parentRow) {
-							targetElement = parentRow;
-						}
-					}
-					// Inside section → select actual element (no auto-jump)
-			
 					//if component properties is loaded in left panel tab instead of right panel show tab
 					let componentTab = document.querySelector(".component-properties-tab a");
 					if (componentTab.offsetParent) { //if properites tab is enabled/visible 
@@ -1901,9 +1637,9 @@ Vvveb.Builder = {
 						bsTab.show(); 
 					}
 					
-					self.selectNode(targetElement);
-					Vvveb.TreeList.selectComponent(targetElement);
-					self.loadNodeComponent(targetElement);
+					self.selectNode(event.target);
+					Vvveb.TreeList.selectComponent(event.target);
+					self.loadNodeComponent(event.target);
 
 					if (Vvveb.component.resizable) {
 						document.getElementById("select-box").classList.add("resizable");
@@ -1991,32 +1727,6 @@ Vvveb.Builder = {
 			Vvveb.Builder.moveNodeUp();
 
 			event.preventDefault();
-			return false;
-		});
-		
-		// Dimis Left/right btns
-		document.querySelector("#left-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.moveNodeLeft();
-			e.preventDefault();
-			return false;
-		});
-
-		document.querySelector("#right-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.moveNodeRight();
-			e.preventDefault();
-			return false;
-		});
-
-		// Dimis increase/decrease width buttons
-		document.querySelector("#increase-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.increaseColumn();
-			e.preventDefault();
-			return false;
-		});
-
-		document.querySelector("#decrease-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.decreaseColumn();
-			e.preventDefault();
 			return false;
 		});
 		
@@ -2116,10 +1826,6 @@ Vvveb.Builder = {
 									nextSibling: node.nextSibling});
 
 			self.selectedEl.remove();
-			// Dispatch custom event when an element is deleted
-			// Used to detect empty canvas state and trigger the "no content" UI
-			// Parent document listens for this to show modal and reset insertion mode
-            document.dispatchEvent(new CustomEvent('vvveb.component.removed'));
 			Vvveb.TreeList.loadComponents();
 			Vvveb.SectionList.loadSections();
 
@@ -2132,8 +1838,7 @@ Vvveb.Builder = {
 		
 		document.getElementById("add-section-btn").addEventListener("click", function(event) {
 			
-			//addSectionElement = self.highlightEl;		
-            addSectionElement = self.selectedEl;	
+			addSectionElement = self.highlightEl; 
 			addSectionBox.style.display  = "block"; 
 
 			let pos = offset(addSectionElement);	
@@ -2159,23 +1864,7 @@ Vvveb.Builder = {
 		});
 		
 		function addSectionComponent(component, after = true) {
-			
-			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
-			
-			// Check: Are we inserting inside a <section> or <header> or <footer>?
-            let parentSection = addSectionElement.closest('section, header, footer, main, article, aside');
-			
-			if (!parentSection && !html.trim().startsWith('<div class="row')) {// !!! don't wrap if the HTML already starts with <div class="row">
-				// proceed..
-				// NO section found → we're at top level
-				// Wrap it: "<h1>Title</h1>" becomes:
-				// "<div class='row'><div class='col-md-12'><h1>Title</h1></div></div>"
-				
-				html = wrapInGrid(html);
-			}
-			// If YES section found → use raw HTML as-is
-			
-			let node = generateElements(html)[0];
+			let node = generateElements(component.html)[0];
 			
 			if (after) {
 				addSectionElement.after(node);
@@ -2188,9 +1877,6 @@ Vvveb.Builder = {
 			}
 
 			self.selectNode(node);
-			// Dimi added: Dispatch custom event so parent document can detect when a component is added
-            // Used to handle empty state transitions (remove no-content class, reset insert mode)
-			document.dispatchEvent(new CustomEvent('vvveb.component.added', { detail: { node: node } }));
 			self.loadNodeComponent(node);
 			Vvveb.TreeList.loadComponents();
 			Vvveb.TreeList.selectComponent(node);
@@ -2396,26 +2082,6 @@ Vvveb.Builder = {
          return html;
 	},
 	
-	// LOL.. just get the content within <body>
-	getHtmlJIM: function(keepHelperAttributes = true) {
-		let doc = window.FrameDocument;
-		
-		doc.querySelectorAll("[contenteditable]").forEach(e => e.removeAttribute("contenteditable"));
-		doc.querySelectorAll("[spellcheckker]").forEach(e => e.removeAttribute("spellcheckker"));
-		doc.querySelectorAll('script[src^="chrome-extension://"]').forEach(e => e.remove());
-		doc.querySelectorAll('script[src^="moz-extension://"]').forEach(e => e.remove());
-		
-		window.dispatchEvent(new CustomEvent("vvveb.getHtml.before", {detail: doc}));
-		
-		Vvveb.FontsManager.cleanUnusedFonts();
-		let html = doc.body.innerHTML; // Just get body content
-		html = this.removeHelpers(html, keepHelperAttributes);
-		
-		window.dispatchEvent(new CustomEvent("vvveb.getHtml.after", {detail: doc}));
-		
-		return html;
-	},
-
 	setHtml: function(html) {
 		//documentElement.innerHTML resets <head> each time and the page flickers
 		//return window.FrameDocument.documentElement.innerHTML = html;
@@ -3007,12 +2673,7 @@ Vvveb.Gui = {
 			componentTab.style.display = "";
 			bsTab.show(); 
 		}
-		// Dimi tweak. If panel is being opened and an element is already selected, reload its properties
-		// VvvvbJS default behaviour was that even you click an element and open the panel, the current element's properties were not fetched. You had to click it again.
-		// See README REMARKS [1]
-		if (rightColumnEnabled && Vvveb.Builder.selectedEl) {
-			Vvveb.Builder.loadNodeComponent(Vvveb.Builder.selectedEl);
-		}
+
 	},
 
 	toggleTreeList: function () {
