@@ -84,7 +84,7 @@ function wrapInGrid(html, colSize = "column full") {
 }
 
 /************************************************
- Action buttons trigger & its popup
+ VvvebJS's native Action buttons trigger & its popup
 ************************************************/
 // Toggle action buttons on trigger click
 document.getElementById('action-trigger').addEventListener('click', function(e) {
@@ -122,7 +122,7 @@ Vvveb.Builder.selectNode = function(node) {
 };
 
 /*****************************************************
-  Create action-buttons for row + column
+  Create custom action-buttons for top-row, row, column
 *****************************************************/
 
 function createActionToolbar(containerId, buttons) {
@@ -201,7 +201,6 @@ function createActionToolbar(containerId, buttons) {
   by using VvvebeJS's native buttons (already in builder.js)
 *****************************************************/
 function attachActionHandlers() {
-    // Generic handler
     function delegateToExisting(targetSelector, buttonId, shouldRestore = true) {
         return function(e) {
             e.preventDefault();
@@ -215,22 +214,23 @@ function attachActionHandlers() {
             }
         };
     }
-	
-	// Top-parent-row handlers
-	document.getElementById("top-parent-row-box-up-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'up-btn'));
-	document.getElementById("top-parent-row-box-down-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'down-btn'));
-	document.getElementById("top-parent-row-box-clone-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'clone-btn'));
-	document.getElementById("top-parent-row-box-delete-btn").addEventListener("click", delegateToExisting('.top-parent-row', 'delete-btn', false));
 
-    // Column handlers
-    document.getElementById("column-box-up-btn").addEventListener("click", delegateToExisting('.column', 'up-btn'));
-    document.getElementById("column-box-down-btn").addEventListener("click", delegateToExisting('.column', 'down-btn'));
-    document.getElementById("column-box-clone-btn").addEventListener("click", delegateToExisting('.column', 'clone-btn'));
-    document.getElementById("column-box-delete-btn").addEventListener("click", delegateToExisting('.column', 'delete-btn', false));
-    
-    // Row handlers
-    document.getElementById("row-box-up-btn").addEventListener("click", delegateToExisting('.row', 'up-btn'));
-    document.getElementById("row-box-down-btn").addEventListener("click", delegateToExisting('.row', 'down-btn'));
-    document.getElementById("row-box-clone-btn").addEventListener("click", delegateToExisting('.row', 'clone-btn'));
-    document.getElementById("row-box-delete-btn").addEventListener("click", delegateToExisting('.row', 'delete-btn', false));
+    // Map box ID prefix → target selector
+    const selectorMap = {
+        'top-parent-row-box': '.top-parent-row',
+        'row-box': '.row',
+        'column-box': '.column'
+    };
+
+    // Auto-detect all buttons matching pattern: {boxId}-{action}-btn
+    document.querySelectorAll('[id$="-btn"]').forEach(btn => {
+        const match = btn.id.match(/^(.+?)-(up|down|left|right|clone|delete)-btn$/);
+        if (match) {
+            const [, boxId, action] = match;
+            const selector = selectorMap[boxId];
+            if (selector) {
+                btn.addEventListener("click", delegateToExisting(selector, `${action}-btn`, action !== 'delete'));
+            }
+        }
+    });
 }

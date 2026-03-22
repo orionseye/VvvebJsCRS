@@ -19817,8 +19817,8 @@ video, audio {
    ============================================ */
 
 	/* on click of our dummy button, we hide VvvbJS default '+' button end action options */
-	body.no-content #add-section-btn,
-	body.no-content #select-actions {
+	body.no-content #select-actions,
+    body.no-content #section-actions	{
 		display: none !important;
 	}
 
@@ -19934,9 +19934,9 @@ video, audio {
     display: none;
 }
 
-#top-parent-row-box a {
+#top-parent-row-box a.tpr-addRow {
     position: absolute;
-    bottom: -15px;
+    bottom: -26px;
     left: 50%;
     transform: translateX(-50%);
     width: 20px;
@@ -19952,11 +19952,12 @@ video, audio {
     text-decoration: none;
     pointer-events: auto;
     cursor: pointer;
+    z-index: 10;
 }
 #top-parent-row-box-actions {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -30px;
+    left: 52%;
     display: flex;
     gap: 4px;
     pointer-events: auto;
@@ -19964,6 +19965,18 @@ video, audio {
     background: rgba(255, 255, 255, 0.9);
     padding: 2px;
 }
+		#top-parent-row-box-actions .rowCol-action-trigger,
+		#top-parent-row-box-actions .rowCol-delete-btn {
+			color: lightgrey !important;
+		}
+		#top-parent-row-box-actions .rowCol-action-trigger:hover {
+			color: inherit !important;
+		}
+		#top-parent-row-box-actions .rowCol-delete-btn:hover {
+			color: #dc3545 !important;
+			background: none !important;
+		}
+	
 #row-box {
     position: absolute;
     border: 1px solid #84848433;
@@ -19973,7 +19986,8 @@ video, audio {
 }
 #row-box-actions {
     position: absolute;
-    top: 0;
+    top: 50%;
+	transform: translateY(-50%);
     left: calc(100% + 5px);
     display: flex;
     pointer-events: auto;
@@ -19981,6 +19995,7 @@ video, audio {
     background: rgba(255, 255, 255, 0.9);
     padding: 2px;
 }
+
 #column-box {
     position: absolute;
     border: 1px solid #00da89;

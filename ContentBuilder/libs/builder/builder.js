@@ -859,8 +859,8 @@ Vvveb.Builder = {
 		
 		// Create toolbars for column & row boxes
 		createActionToolbar('top-parent-row-box', ['up', 'down', 'clone', 'delete']);
-		createActionToolbar('column-box', ['up', 'down', 'clone', 'delete']);
 		createActionToolbar('row-box', ['up', 'down', 'clone', 'delete']);
+		createActionToolbar('column-box', ['up', 'down', 'left', 'right', 'clone', 'delete']);
 		attachActionHandlers();  // Wire up the buttons
 		// end Create toolbars for all boxes
 
@@ -1653,8 +1653,8 @@ Vvveb.Builder = {
 				topParentRowBox.rowElement = topmostRow; // Store reference to this specific row
 			}
 
-			// Position row-box around parent row
-			let parentRow = node.closest('.row');
+			// Position row-box around parent row (exclude top-parent-row)
+			let parentRow = node.closest('.row:not(.top-parent-row)');
 			let RowBox = document.getElementById("row-box");
 			if (parentRow) {
 				let rowPos = offset(parentRow);
