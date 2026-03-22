@@ -2295,6 +2295,10 @@ Vvveb.Builder = {
 			if ((left + addSectionBox.offsetWidth) > self.frameHtml.offsetWidth) left = self.frameHtml.offsetWidth - addSectionBox.offsetWidth;
 			if (((top + addSectionBox.offsetHeight) + self.frameHtml.scrollTop) > outerHeight) top = top - addSectionBox.offsetHeight;
 			
+			// Force minimum top value: After above calculations, prevent modal being positioned negative and gets pushed outside the visible viewport. Set min. positive values.
+			if (top < 0) top = 10;  // Minimum 10px from top
+			if (left < 0) left = 10; // Minimum 10px from left
+
 			addSectionBox.style.top  = top + "px"; 
 			addSectionBox.style.left  = left + "px"; 
 
