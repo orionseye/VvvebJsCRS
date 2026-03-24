@@ -8722,7 +8722,12 @@ display: inline-flex;
     // Logic: Only wrap with <section> if it's in the wrapAsSection list
     let finalHtml = (snippet.html || "").trim();
     if (isSection) {
-        finalHtml = finalHtml.startsWith("<section") ? finalHtml : `<section>\n${finalHtml}\n</section>`;
+        finalHtml = finalHtml.startsWith("<section") ? finalHtml : `<section class="top-parent-row">\n${finalHtml}\n</section>`;
+    }else {
+        // Wrap in top-parent-row block
+        finalHtml = finalHtml.startsWith('<div class="top-parent-row"') 
+            ? finalHtml 
+            : `<div class="top-parent-row">\n${finalHtml}\n</div>`;
     }
 
     Vvveb.Sections.add(key, {

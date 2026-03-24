@@ -1617,11 +1617,7 @@ Vvveb.Builder = {
 /********************* Dimi's custom top-row, inner row & column wrappers *************/
 
 			// Always attach row-level button. (Our orange) .add-row-box
-			let topmostRow = node.closest('.row');
-				// Also iterate to previous, if there is a <sction> with class 'row'
-				while (topmostRow && topmostRow.parentElement.closest('.row')) {
-					topmostRow = topmostRow.parentElement.closest('.row');
-				}
+			let topmostRow = node.closest('.top-parent-row');
 
 			let topParentRowBox = document.getElementById("top-parent-row-box");
 			if (topmostRow) {
@@ -1653,8 +1649,8 @@ Vvveb.Builder = {
 				topParentRowBox.rowElement = topmostRow; // Store reference to this specific row
 			}
 
-			// Position row-box around parent row (exclude top-parent-row)
-			let parentRow = node.closest('.row:not(.top-parent-row)');
+			// Position row-box around (inner) parent row
+			let parentRow = node.closest('.row');
 			let RowBox = document.getElementById("row-box");
 			if (parentRow) {
 				// Attach click handler ONCE (not on every click)
@@ -2321,22 +2317,22 @@ Vvveb.Builder = {
 			
 			let html = component.html;  // Get component's HTML (e.g., "<h1>Title</h1>")
 			
-			// Check: Are we inserting inside a <section> or <header> or <footer>?
-            let parentSection = addSectionElement.closest('section, header, footer, main, article, aside');
+			// Check: Are we inserting inside a block? (semantic containers OR top-parent-row blocks)
+			let parentBlock = addSectionElement.parentElement.closest('.top-parent-row, section, header, footer, main, article, aside');
 			
-			if (!parentSection && !html.trim().startsWith('<div class="row')) {// !!! don't wrap if the HTML already starts with <div class="row">
-				// proceed..
-				// NO section found → we're at top level
+			// Only wrap components when outside blocks
+			// Snippets from sections.js come pre-wrapped, so this mainly affects individual components
+			if (!parentBlock && !/^<div class=["'](row|top-parent-row)/.test(html.trim()) && !/^<(section|header|footer|main|article|aside|nav)/i.test(html.trim())) {
+				// NO parent block found → we're at top level
 				// Wrap it: "<h1>Title</h1>" becomes:
-				// "<div class='row'><div class='col-md-12'><h1>Title</h1></div></div>"
-				
+				// "<div class='row top-parent-row'><div class='column full'><h1>Title</h1></div></div>"
 				html = wrapInGrid(html);
 			}
-			// If YES section found → use raw HTML as-is
+			// If YES parent block found → use raw HTML as-is
 			
 			// NEW: Force wrap if triggered from (inner) row-box button
 			let forceWrap = self.forceWrapInRow;
-			if (forceWrap && !/^<div class=["']row/.test(html.trim())) { //This matches both class="row" and class='row'
+			if (forceWrap && !/^<div class=["']row/.test(html.trim())) { // This matches both class="row" and class='row'
 				self.forceWrapInRow = false; // Reset flag
 				html = wrapInGrid(html).replace('row top-parent-row', 'row');
 			}
@@ -2352,7 +2348,6 @@ Vvveb.Builder = {
 			if (component.afterDrop) {
 				node = component.afterDrop(node);
 			}
-
 			self.selectNode(node);
 			
 			// Dimi: hide the outlined row-box + column-box when new content added to avoid re-positioning issues

@@ -146,6 +146,12 @@ section:hover .container-fluid > .row > .col {
 
 /* Our super dupper top-parent-row */
 
+ .top-parent-row {
+    display: block;
+    width: 100%;
+  }
+  
  .top-parent-row:hover, .row:hover > .column {
   outline: 1px dashed #DFDFDF;
-  outline-offset: -2px; }
+  outline-offset: -2px; 
+  }
