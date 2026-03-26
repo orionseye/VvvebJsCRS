@@ -26,11 +26,11 @@ Vvveb.Components.add("dimi/flex-container", {
 			<div style="flex: 0 0 33.33%; padding: 20px; background: #AACDDC;">Column 1 (33%)</div>
 			<div style="flex: 1; padding: 20px; background: #F3E3D0;">Column 2 (auto)</div>
 		</div>
-		
+	  
 	</div>
     `,
-    
-    afterDrop: function(node) {
+	
+	/*afterDrop: function(node) {
         const body = Vvveb.Builder.frameBody;
         const existingHandler = body.querySelector("#flex-badge-handler");
         
@@ -39,26 +39,11 @@ Vvveb.Components.add("dimi/flex-container", {
             script.id = 'flex-badge-handler';
             script.type = 'text/javascript';
             script.text = `
-                document.body.addEventListener('click', function(e) {
-                    const parent = e.target.closest('.IncrDecr-flag');
-                    document.querySelectorAll('.flex-parent-badge').forEach(b => b.remove());
-                    if (parent && e.target !== parent) {
-                        if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-                        const badge = document.createElement('div');
-                        badge.className = 'flex-parent-badge';
-                        badge.innerText = '⇖ Select Row';
-                        badge.style.cssText = "position: absolute; bottom: 5px; left: 101%; white-space: nowrap; background: #007bff; color: white; font-size: 10px; padding: 2px 6px; border-radius: 3px; cursor: pointer; z-index: 1000; opacity: 0.8; font-family: sans-serif;";
-                        badge.onclick = function(event) {
-                            event.stopPropagation();
-                            parent.click();
-                            badge.remove();
-                        };
-                        parent.appendChild(badge);
-                    }
-                }, true);
+
             `;
             body.appendChild(script);
         }
         return node;
     }
+	*/
 });

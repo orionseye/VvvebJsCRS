@@ -1379,146 +1379,6 @@ Vvveb.Builder = {
 			return node.nextElementSibling && Vvveb.Builder._isHorizontalLayout(parent);
 		},
 
-	/* Dimis increase/decrease Column
-	 * Only for flex without gaps, does not work on 
-	 * (a) flex parent with gaps 
-	 * (b) columns which do not fill parent's available space!
-	*/
-	increaseColumn: function(node) {
-		if (!node) node = Vvveb.Builder.selectedEl;
-		
-		const parent = node.parentNode;
-		if (!Vvveb.Builder._isHorizontalLayout(parent)) return;
-		
-		const oldStyle = node.getAttribute('style');
-		
-		// Calculate current width based on actual rendered size
-		const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-		
-		// Increase by 10%, cap at 90%
-		const newWidth = Math.min(currentWidth + 10, 90);
-		
-		// Set siblings to flex: 1 so they fill remaining space
-		Array.from(parent.children).forEach(child => {
-			if (child !== node) {
-				child.style.flex = '1';
-				child.style.width = '';
-				child.style.flexBasis = '';
-			}
-		});
-		
-		// Set ONLY current node's explicit width
-		// Use flex: 0 1 X% instead of flex: 0 0 X%
-		// The middle value (flex-shrink: 1) allows the column to shrink if needed
-		// to prevent overflow when borders/padding push total width beyond 100%
-		node.style.flex = `0 1 ${newWidth}%`;
-		
-		Vvveb.Builder.selectNode(node);
-		
-		Vvveb.Undo.addMutation({
-			type: 'attributes',
-			target: node,
-			attributeName: 'style',
-			oldValue: oldStyle
-		});
-	},
-
-	decreaseColumn: function(node) {
-		if (!node) node = Vvveb.Builder.selectedEl;
-		
-		const parent = node.parentNode;
-		if (!Vvveb.Builder._isHorizontalLayout(parent)) return;
-		
-		const oldStyle = node.getAttribute('style');
-		
-		// Calculate current width based on actual rendered size
-		const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-		
-		// Decrease by 10%, cap at 10%
-		const newWidth = Math.max(currentWidth - 10, 10);
-		
-		// Set siblings to flex: 1 so they fill remaining space
-		Array.from(parent.children).forEach(child => {
-			if (child !== node) {
-				child.style.flex = '1';
-				child.style.width = '';
-				child.style.flexBasis = '';
-			}
-		});
-		
-		// Set ONLY current node's explicit width.
-		// Use flex: 0 1 X% instead of flex: 0 0 X%
-		// The middle value (flex-shrink: 1) allows the column to shrink if needed
-		// to prevent overflow when borders/padding push total width beyond 100%
-		node.style.flex = `0 1 ${newWidth}%`;
-		
-		Vvveb.Builder.selectNode(node);
-		
-		Vvveb.Undo.addMutation({
-			type: 'attributes',
-			target: node,
-			attributeName: 'style',
-			oldValue: oldStyle
-		});
-	},
-
-		// Dimis HELPER FUNCTIONS for increase/decrease Column
-		_canIncreaseColumn: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			if (!Vvveb.Builder._isHorizontalLayout(parent)) return false;
-			
-			// Check 0: Only work with OUR flex containers
-			if (!parent.classList.contains('IncrDecr-flag')) return false;
-			
-			// Check 1: No gaps allowed
-			const parentStyle = getComputedStyle(parent);
-			const gap = parseFloat(parentStyle.gap || parentStyle.columnGap || 0);
-			if (gap > 0) return false;
-			
-			// Check 2: Children must fill 100% of parent width (within 2% tolerance)
-			let totalChildWidth = 0;
-			Array.from(parent.children).forEach(child => {
-				totalChildWidth += child.offsetWidth;
-			});
-			const parentWidth = parent.offsetWidth;
-			const fillPercentage = (totalChildWidth / parentWidth) * 100;
-			
-			if (fillPercentage < 98 || fillPercentage > 102) return false;
-			
-			// Check 3: Current column hasn't reached max (90%)
-			const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-			return currentWidth < 90;
-		},
-
-		_canDecreaseColumn: function(node) {
-			if (!node) return false;
-			const parent = node.parentNode;
-			if (!Vvveb.Builder._isHorizontalLayout(parent)) return false;
-			
-			// Check 0: Only work with OUR flex containers
-			if (!parent.classList.contains('IncrDecr-flag')) return false;
-			
-			// Check 1: No gaps allowed
-			const parentStyle = getComputedStyle(parent);
-			const gap = parseFloat(parentStyle.gap || parentStyle.columnGap || 0);
-			if (gap > 0) return false;
-			
-			// Check 2: Children must fill 100% of parent width (within 2% tolerance)
-			let totalChildWidth = 0;
-			Array.from(parent.children).forEach(child => {
-				totalChildWidth += child.offsetWidth;
-			});
-			const parentWidth = parent.offsetWidth;
-			const fillPercentage = (totalChildWidth / parentWidth) * 100;
-			
-			if (fillPercentage < 98 || fillPercentage > 102) return false;
-			
-			// Check 3: Current column hasn't reached min (10%)
-			const currentWidth = (node.offsetWidth / parent.offsetWidth) * 100;
-			return currentWidth > 10;
-		},
-		
 	cloneNode:  function(node) {
 		if (!node) {
 			node = Vvveb.Builder.selectedEl;
@@ -1589,17 +1449,8 @@ Vvveb.Builder = {
 			rightBtn.style.display = canMoveRight ? "" : "none";
 		}
 		
-		// Dimis Show/hide increase/decrease buttons
-		const increaseBtn = document.getElementById("increase-btn");
-		const decreaseBtn = document.getElementById("decrease-btn");
-
-		if (increaseBtn && decreaseBtn) {
-			const canIncrease = Vvveb.Builder._canIncreaseColumn(node);
-			const canDecrease = Vvveb.Builder._canDecreaseColumn(node);
-			
-			increaseBtn.style.display = canIncrease ? "" : "none";
-			decreaseBtn.style.display = canDecrease ? "" : "none";
-		}
+		// Enable Flex column resize
+		setupFlexResize(node);
 
 		let target = node;
 		self.selectedEl = target;
@@ -2144,19 +1995,6 @@ Vvveb.Builder = {
 
 		document.querySelector("#right-btn").addEventListener("click", function (e) {
 			Vvveb.Builder.moveNodeRight();
-			e.preventDefault();
-			return false;
-		});
-
-		// Dimis increase/decrease width buttons
-		document.querySelector("#increase-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.increaseColumn();
-			e.preventDefault();
-			return false;
-		});
-
-		document.querySelector("#decrease-btn").addEventListener("click", function (e) {
-			Vvveb.Builder.decreaseColumn();
 			e.preventDefault();
 			return false;
 		});

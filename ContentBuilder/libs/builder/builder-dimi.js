@@ -76,7 +76,7 @@ document.addEventListener('vvveb.component.removed', function() {
 ************************************************/
 
 function wrapInGrid(html, colSize = "column full") {
-    return `<div class="row top-parent-row">
+    return `<div class="top-parent-row">
         <div class="${colSize}">
             ${html}
         </div>
@@ -233,4 +233,140 @@ function attachActionHandlers() {
             }
         }
     });
+}
+
+
+/*****************************************************
+  Flex column edge resize
+*****************************************************/
+
+function setupFlexResize(node) {
+	const EDGE_THRESHOLD = 8;
+	const self = this; // Important: capture 'this' context
+	
+	// Clean up previous listeners if any
+	if (self._flexResizeCleanup) {
+		self._flexResizeCleanup();
+		self._flexResizeCleanup = null;
+	}
+	
+	// Check if node is inside IncrDecr-flag container
+	const container = node.closest('.IncrDecr-flag');
+	if (!container) return;
+	
+	const columns = Array.from(container.children);
+	const columnIndex = columns.indexOf(node);
+	if (columnIndex === -1) return;
+	
+	let isResizing = false;
+	let resizeEdge = null; // 'left' or 'right'
+	let startX = 0;
+	let startWidths = {};
+	
+	function handleMouseMove(e) {
+		if (isResizing) return;
+		
+		const rect = node.getBoundingClientRect();
+		const x = e.clientX - rect.left;
+		const width = rect.width;
+		
+		const nearLeft = x <= EDGE_THRESHOLD && columnIndex > 0;
+		const nearRight = x >= (width - EDGE_THRESHOLD) && columnIndex < columns.length - 1;
+		
+		if (nearLeft || nearRight) {
+			node.style.cursor = 'col-resize';
+			resizeEdge = nearLeft ? 'left' : 'right';
+		} else {
+			node.style.cursor = '';
+			resizeEdge = null;
+		}
+	}
+	
+	function handleMouseDown(e) {
+		if (!resizeEdge) return;
+		
+		e.preventDefault();
+		e.stopPropagation();
+		
+		isResizing = true;
+		startX = e.clientX;
+		
+		// Set cursor on body during drag
+		const doc = node.ownerDocument;
+		doc.body.style.cursor = 'col-resize';
+		
+		// Store initial widths
+		columns.forEach((col, i) => {
+			startWidths[i] = col.offsetWidth;
+		});
+		
+		node.removeEventListener('mousemove', handleMouseMove);
+		doc.addEventListener('mousemove', handleDragMove);
+		doc.addEventListener('mouseup', handleDragEnd);
+	}
+	
+	function handleDragMove(e) {
+		if (!isResizing) return;
+		
+		const deltaX = e.clientX - startX;
+		const containerWidth = container.offsetWidth;
+		
+		if (resizeEdge === 'right') {
+			// Resize current column and next sibling
+			const currentCol = columns[columnIndex];
+			const nextCol = columns[columnIndex + 1];
+			
+			const newCurrentWidth = startWidths[columnIndex] + deltaX;
+			const newNextWidth = startWidths[columnIndex + 1] - deltaX;
+			
+			if (newCurrentWidth > 10 && newNextWidth > 10) {
+				const currentPercent = (newCurrentWidth / containerWidth) * 100;
+				const nextPercent = (newNextWidth / containerWidth) * 100;
+				
+				currentCol.style.flex = `0 1 ${currentPercent}%`;
+				nextCol.style.flex = `0 1 ${nextPercent}%`;
+			}
+		} else if (resizeEdge === 'left') {
+			// Resize previous column and current column
+			const prevCol = columns[columnIndex - 1];
+			const currentCol = columns[columnIndex];
+			
+			const newPrevWidth = startWidths[columnIndex - 1] + deltaX;
+			const newCurrentWidth = startWidths[columnIndex] - deltaX;
+			
+			if (newPrevWidth > 10 && newCurrentWidth > 10) {
+				const prevPercent = (newPrevWidth / containerWidth) * 100;
+				const currentPercent = (newCurrentWidth / containerWidth) * 100;
+				
+				prevCol.style.flex = `0 1 ${prevPercent}%`;
+				currentCol.style.flex = `0 1 ${currentPercent}%`;
+			}
+		}
+	}
+	
+	function handleDragEnd(e) {
+		isResizing = false;
+		resizeEdge = null;
+		
+		const doc = node.ownerDocument;
+		doc.body.style.cursor = ''; // Clear body cursor
+		node.style.cursor = '';
+		
+		doc.removeEventListener('mousemove', handleDragMove);
+		doc.removeEventListener('mouseup', handleDragEnd);
+		node.addEventListener('mousemove', handleMouseMove);
+	}
+	
+	// Attach listeners
+	node.addEventListener('mousemove', handleMouseMove);
+	node.addEventListener('mousedown', handleMouseDown);
+	
+	// Store cleanup function
+	self._flexResizeCleanup = function() {
+		node.removeEventListener('mousemove', handleMouseMove);
+		node.removeEventListener('mousedown', handleMouseDown);
+		document.removeEventListener('mousemove', handleDragMove);
+		document.removeEventListener('mouseup', handleDragEnd);
+		node.style.cursor = '';
+	};
 }

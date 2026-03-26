@@ -724,11 +724,6 @@ $_SESSION['sID'] = $serviceID;	// needed for saveimage.php
 											<a id="right-btn" href="" title="Move element right" style="display:none;"><i class="la la-arrow-right"></i></a>
 											</div>
 											
-											<div style="display: flex; flex: 0 0 100%; flex-wrap: wrap; gap: 6px;">
-											<a id="decrease-btn" href="" title="Decrease width" style="display:none;"><i class="la la-minus"></i></a>
-											<a id="increase-btn" href="" title="Increase width" style="display:none;"><i class="la la-plus"></i></a>
-											</div>
-											
 											<div style="display: flex; flex-wrap: wrap; gap: 6px;">
 											<a id="edit-code-btn" href="" title="Edit html code"><i class="icon-code-outline"></i></a>
 											<a id="save-reusable-btn" href="" title="Save as reusable"><i class="icon-save-outline"></i></a>
